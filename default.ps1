@@ -100,7 +100,7 @@ task Release -depends Test {
 		$build_dir\Rhino.Commons.Clr.xml `
 		$build_dir\Rhino.Commons.NHibernate.dll `
 		$build_dir\Rhino.Commons.NHibernate.xml `
-		license.txt `
+		license.txt
 	if ($lastExitCode -ne 0) {
         throw "Error: Failed to execute ZIP command"
     }
