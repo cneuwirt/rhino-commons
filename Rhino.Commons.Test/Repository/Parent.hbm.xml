@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<hibernate-mapping default-lazy='false'
+	assembly='Rhino.Commons.Test'
+	namespace='Rhino.Commons.Test.Repository'
+	xmlns='urn:nhibernate-mapping-2.2'>
+  <import rename='ParentDto' class='Rhino.Commons.Test.Repository.ParentDto, Rhino.Commons.Test'/>
+	<class name='Parent'>
+		<id name="Id" column="ParentId">
+			<generator class="assigned"/>
+		</id>
+		<version name="Version" unsaved-value="-1"/>
+		<property name='Name'/>
+		<property name='Age'/>
+
+		<bag name="Children"
+			inverse="true"
+			cascade="all-delete-orphan" fetch="join">
+
+			<key column="ParentId" />
+
+			<one-to-many class="Child"/>
+		</bag>
+		
+	</class>
+
+	<query name="QueryParentInfoByName">
+			select new ParentDto(p.Name, p.Age)
+				from Parent p
+				where p.Name Like :nameOfPerson
+	</query>
+	
+</hibernate-mapping>
