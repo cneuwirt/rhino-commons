@@ -135,9 +135,9 @@ namespace Rhino.Commons.Binsor.Macros
 
 		protected static bool ProcessStatements(MacroStatement macro, Predicate<Statement> action)
 		{
-			if (macro.Block.HasStatements)
+			if (!macro.Body.IsEmpty)
 			{
-				foreach (Statement statement in macro.Block.Statements)
+				foreach (Statement statement in macro.Body.Statements)
 				{
 					if (!action(statement)) return false;
 				}
@@ -188,7 +188,7 @@ namespace Rhino.Commons.Binsor.Macros
 
 		protected bool EnsureNoStatements(MacroStatement macro, string name)
 		{
-			if (macro.Block.HasStatements)
+			if (!macro.Body.IsEmpty)
 			{
 				AddCompilerError(macro.LexicalInfo,
 					string.Format("A {0} statement can have no statements", name));

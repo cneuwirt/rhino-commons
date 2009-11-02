@@ -233,6 +233,11 @@
             essentially defining which representation).
             </summary>
         </member>
+        <member name="P:Castle.ActiveRecord.ActiveRecordAttribute.SchemaAction">
+            <summary>
+            Determines the action of CreateSchema, DropSchema or UpdateSchema for this table.
+            </summary>
+        </member>
         <member name="T:Castle.ActiveRecord.ActiveRecordSkipAttribute">
             <summary>
             Denotes that the specific class - 
@@ -442,6 +447,30 @@
             <param name="value">The value.</param>
             <param name="clazz">The clazz.</param>
         </member>
+        <member name="M:Castle.ActiveRecord.Any.MetaValueAttribute.#ctor(System.Byte,System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Castle.ActiveRecord.Any.MetaValueAttribute"/> class.
+            Allows a byte to be used as a meta-value
+            </summary>
+            <param name="value">The value.</param>
+            <param name="clazz">The clazz.</param>
+        </member>
+        <member name="M:Castle.ActiveRecord.Any.MetaValueAttribute.#ctor(System.Int16,System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Castle.ActiveRecord.Any.MetaValueAttribute"/> class.
+            Allows a short to be used as a meta-value
+            </summary>
+            <param name="value">The value.</param>
+            <param name="clazz">The clazz.</param>
+        </member>
+        <member name="M:Castle.ActiveRecord.Any.MetaValueAttribute.#ctor(System.Int32,System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Castle.ActiveRecord.Any.MetaValueAttribute"/> class.
+            Allows a int to be used as a meta-value
+            </summary>
+            <param name="value">The value.</param>
+            <param name="clazz">The clazz.</param>
+        </member>
         <member name="M:Castle.ActiveRecord.Any.MetaValueAttribute.System#IComparable#CompareTo(System.Object)">
             <summary>
             This is here so the XmlGenerationVisitor will always
@@ -546,6 +575,11 @@
             <summary>
             Chooses between outer-join fetching
             or sequential select fetching.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.BelongsToAttribute.Lazy">
+            <summary>
+            Chooses between proxy or eager fetching.
             </summary>
         </member>
         <member name="P:Castle.ActiveRecord.BelongsToAttribute.PropertyRef">
@@ -900,6 +934,22 @@
         <member name="F:Castle.ActiveRecord.FetchEnum.SubSelect">
             <summary>
             Use a seperate SELECT statement to load the data, re-running the original query in a subselect
+            </summary>
+        </member>
+        <member name="T:Castle.ActiveRecord.FetchWhen">
+            <summary>
+            Defines the possible lazy option values.
+            See http://nhforge.org/doc/nh/en/index.html#performance-fetching
+            </summary>
+        </member>
+        <member name="F:Castle.ActiveRecord.FetchWhen.OnInvoke">
+            <summary>
+            Specifies that the property should be fetched lazily when the instance variable is first accessed.
+            </summary>
+        </member>
+        <member name="F:Castle.ActiveRecord.FetchWhen.Immediate">
+            <summary>
+            Specifies that the association will always be eagerly fetched.
             </summary>
         </member>
         <member name="T:Castle.ActiveRecord.CascadeEnum">
@@ -2738,6 +2788,11 @@
             Determines the default flushing behaviour of scopes.
             </summary>
         </member>
+        <member name="P:Castle.ActiveRecord.Framework.IConfigurationSource.Searchable">
+            <summary>
+            When <c>true</c>, NHibernate.Search event listeners are added. 
+            </summary>
+        </member>
         <member name="M:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource"/> class.
@@ -2770,9 +2825,9 @@
         </member>
         <member name="M:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.Build(Castle.ActiveRecord.Framework.Config.DatabaseType,System.String)">
             <summary>
-            Builds an InPlaceConfiguratioSource for the specified database.
+            Builds an <see cref="T:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource"/> for the specified database.
             </summary>
-            <param name="database">The database.</param>
+            <param name="database">The database type.</param>
             <param name="connectionString">The connection string.</param>
             <returns></returns>
         </member>
@@ -2794,8 +2849,8 @@
             <summary>
             Sets the type of the thread info.
             </summary>
-            <param name="isWeb">if we run in a web context or not</param>
-            <param name="customType">Type of the custom implementation</param>
+            <param name="isWeb">If we are running in a web context.</param>
+            <param name="customType">The type of the custom implementation.</param>
         </member>
         <member name="M:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.SetUpSessionFactoryHolderType(System.String)">
             <summary>
@@ -2807,13 +2862,13 @@
             <summary>
             Sets the type of the naming strategy.
             </summary>
-            <param name="customType">Custom implementation type name</param>
+            <param name="customType">Custom implementation type name.</param>
         </member>
         <member name="M:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.SetDebugFlag(System.Boolean)">
             <summary>
             Sets the debug flag.
             </summary>
-            <param name="isDebug">if set to <c>true</c> Active Record will produce debug information.</param>
+            <param name="isDebug">If set to <c>true</c> ActiveRecord will produce debug information.</param>
         </member>
         <member name="M:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.SetIsLazyByDefault(System.Boolean)">
             <summary>
@@ -2822,19 +2877,19 @@
         </member>
         <member name="M:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.SetVerifyModelsAgainstDBSchema(System.Boolean)">
             <summary>
-            Sets the debug flag.
+            Sets the flag to indicate if ActiveRecord should verify models against the database schema on startup.
             </summary>
-            <param name="verifyModelsAgainstDBSchema">if set to <c>true</c> Active Record will verify the models against the db schema on startup.</param>
+            <param name="verifyModelsAgainstDBSchema">If set to <c>true</c> ActiveRecord will verify the models against the db schema on startup.</param>
         </member>
         <member name="M:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.SetPluralizeTableNames(System.Boolean)">
             <summary>
             Sets the pluralizeTableNames flag.
             </summary>
-            <param name="pluralize">if set to <c>true</c> Active Record will pluralize inferred table names.</param>
+            <param name="pluralize">If set to <c>true</c> ActiveRecord will pluralize inferred table names.</param>
         </member>
         <member name="M:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.SetDefaultFlushType(Castle.ActiveRecord.Framework.DefaultFlushType)">
             <summary>
-            Sets the value determining flush behaviour
+            Sets the value indicating the default flush behaviour.
             </summary>
             <param name="flushType">The chosen default behaviour.</param>
         </member>
@@ -2844,13 +2899,13 @@
             XML. This method has been moved from XmlConfigurationSource to avoid code
             duplication in ActiveRecordIntegrationFacility.
             </summary>
-            <param name="configurationValue">The configuration value</param>
+            <param name="configurationValue">The configuration value.</param>
         </member>
         <member name="M:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.ProcessConfiguration(Castle.Core.Configuration.IConfiguration)">
             <summary>
             Processes the configuration applying any substitutions.
             </summary>
-            <param name="config">The configuration</param>
+            <param name="config">The configuration to process.</param>
         </member>
         <member name="P:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.ThreadScopeInfoImplementation">
             <summary>
@@ -2875,7 +2930,7 @@
         </member>
         <member name="P:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.Debug">
             <summary>
-            Gets a value indicating whether this <see cref="T:Castle.ActiveRecord.Framework.IConfigurationSource"/> produce debug information
+            Gets a value indicating whether this <see cref="T:Castle.ActiveRecord.Framework.IConfigurationSource"/> produces debug information.
             </summary>
             <value><c>true</c> if debug; otherwise, <c>false</c>.</value>
         </member>
@@ -2897,7 +2952,7 @@
         </member>
         <member name="P:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.VerifyModelsAgainstDBSchema">
             <summary>
-            Gets or Sets a value indicating whether the models should be verified against the db schema on Initialisation.
+            Gets or sets a value indicating whether the models should be verified against the db schema on initialisation.
             </summary>
             <value>
             	<c>true</c> if models should be verified; otherwise, <c>false</c>.
@@ -2906,6 +2961,11 @@
         <member name="P:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.DefaultFlushType">
             <summary>
             Determines the default flushing behaviour of scopes.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.Searchable">
+            <summary>
+            When <c>true</c>, NHibernate.Search event listeners are added.
             </summary>
         </member>
         <member name="P:Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource.IsRunningInWebApp">
@@ -2973,6 +3033,107 @@
             </summary>
             <value>The instance.</value>
         </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.Configure">
+            <summary>
+            Enables the fluent configuration of ActiveRecord.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.Configure.ActiveRecord">
+            <summary>
+            Builds a fluent configuration for general ActiveRecord settings.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.Configure.Storage">
+            <summary>
+            Builds an ActiveRecord storage specifiaction fluently.
+            </summary>
+        </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.DefaultActiveRecordConfiguration">
+            <summary>
+             Default configuration class for <see cref="T:Castle.ActiveRecord.Framework.Config.IActiveRecordConfiguration"/>.
+            </summary>
+        </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.IActiveRecordConfiguration">
+            <summary>
+            New configuration interface for ActiveRecord basic functionality
+            </summary>
+            <remarks>
+            This interface is subject to further modification. If you need to implement
+            this interface, please inherit from <see cref="T:Castle.ActiveRecord.Framework.Config.DefaultActiveRecordConfiguration"/>.
+            </remarks>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.IActiveRecordConfiguration.ThreadScopeInfoImplementation">
+            <summary>
+            The <see cref="T:Castle.ActiveRecord.Framework.IThreadScopeInfo"/> to use in ActiveRecord.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.IActiveRecordConfiguration.SessionfactoryHolderImplementation">
+            <summary>
+            The <see cref="T:Castle.ActiveRecord.Framework.ISessionFactoryHolder"/> to use in ActiveRecord.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.IActiveRecordConfiguration.DefaultFlushType">
+            <summary>
+            Determines the default Flush-behaviour of <see cref="T:Castle.ActiveRecord.ISessionScope"/>.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.IActiveRecordConfiguration.WebEnabled">
+            <summary>
+            Determines whether ActiveRecord is configured for use in web apps.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.IActiveRecordConfiguration.Lazy">
+            <summary>
+            Determines whether collections should be loaded lazily by default.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.IActiveRecordConfiguration.Verification">
+            <summary>
+            Determines whether the models should be verified against the chosem data stores
+            at initialization.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.IActiveRecordConfiguration.Searchable">
+            <summary>
+            Determines whether event listeners for NHibernate.Search should be registered.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.DefaultActiveRecordConfiguration.ThreadScopeInfoImplementation">
+            <summary>
+            The <see cref="T:Castle.ActiveRecord.Framework.IThreadScopeInfo"/> to use in ActiveRecord.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.DefaultActiveRecordConfiguration.SessionfactoryHolderImplementation">
+            <summary>
+            The <see cref="T:Castle.ActiveRecord.Framework.ISessionFactoryHolder"/> to use in ActiveRecord.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.DefaultActiveRecordConfiguration.DefaultFlushType">
+            <summary>
+            Determines the default Flush-behaviour of <see cref="T:Castle.ActiveRecord.ISessionScope"/>.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.DefaultActiveRecordConfiguration.WebEnabled">
+            <summary>
+            Determines whether ActiveRecord is configured for use in web apps.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.DefaultActiveRecordConfiguration.Lazy">
+            <summary>
+            Determines whether collections should be loaded lazily by default.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.DefaultActiveRecordConfiguration.Verification">
+            <summary>
+            Determines whether the models should be verified against the chosem data stores
+            at initialization.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.DefaultActiveRecordConfiguration.Searchable">
+            <summary>
+            Determines whether event listeners for NHibernate.Search should be registered.
+            </summary>
+        </member>
         <member name="T:Castle.ActiveRecord.Framework.DefaultFlushType">
             <summary>
             Determines the default flushing behaviour of <see cref="T:Castle.ActiveRecord.SessionScope"/>
@@ -3004,6 +3165,284 @@
             allows to use the scopes like the NH-ISession-ITransaction-block.
             </summary>
         </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.DefaultStorageConfiguration">
+            <summary>
+            Default implementation for <see cref="T:Castle.ActiveRecord.Framework.Config.IStorageConfiguration"/>.
+            </summary>
+        </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.IStorageConfiguration">
+            <summary>
+            Interface for configuration of a database storage.
+            </summary>
+            <remarks>
+            This interface is subject to further modification. If you need to implement
+            this interface, please inherit from <see cref="T:Castle.ActiveRecord.Framework.Config.DefaultStorageConfiguration"/>.
+            </remarks>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.IStorageConfiguration.TypeSelections">
+            <summary>
+            The type selections for that storage.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.IStorageConfiguration.ConfigurationValues">
+            <summary>
+            Contains the name-value-pairs for the NHibernate configuration
+            </summary>
+        </member>
+        <member name="F:Castle.ActiveRecord.Framework.Config.DefaultStorageConfiguration.TypeSelectionList">
+            <summary>
+            The type selections writable store.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.DefaultStorageConfiguration.GetTypeName``1">
+            <summary>
+            Creates a type name in the form Type.Fullname, Assembly.Simple.Name
+            </summary>
+            <typeparam name="T">The type for which to create the name</typeparam>
+            <returns>The created name</returns>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.DefaultStorageConfiguration.TypeSelections">
+            <summary>
+            The type selections for that storage.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.DefaultStorageConfiguration.ConfigurationValues">
+            <summary>
+            Contains the name-value-pairs for the NHibernate configuration
+            </summary>
+        </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.FluentActiveRecordConfiguration">
+            <summary>
+            Allows to configure ActiveRecord fluently.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentActiveRecordConfiguration.ForWeb">
+            <summary>
+            Enables ActiveRecord to be used in a ASP.NET scenario by registering a proper
+            <see cref="T:Castle.ActiveRecord.Framework.IThreadScopeInfo"/>. By default, ActiveRecord cannot be used in
+            web applications.
+            </summary>
+            <returns>The fluent configuration itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentActiveRecordConfiguration.Flush(Castle.ActiveRecord.Framework.DefaultFlushType)">
+            <summary>
+            Sets the flush behaviour for <see cref="T:Castle.ActiveRecord.ISessionScope"/> when no
+            other behaviour is specified in the scope itself. The default for
+            this configuration is <see cref="F:Castle.ActiveRecord.Framework.DefaultFlushType.Classic"/>. See
+            <see cref="T:Castle.ActiveRecord.Framework.DefaultFlushType"/> for what the options mean.
+            </summary>
+            <param name="flushType">The default flushing behaviour to set.</param>
+            <returns>The fluent configuration itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentActiveRecordConfiguration.UseThreadScopeInfo``1">
+            <summary>
+            Sets the <see cref="T:Castle.ActiveRecord.Framework.IThreadScopeInfo"/> to use. Normally, this type is
+            set when ActiveRecord is used in web application. You should set this
+            value only if you need a custom implementation of that interface.
+            </summary>
+            <typeparam name="T">The implementation to use.</typeparam>
+            <returns>The fluent configuration itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentActiveRecordConfiguration.UseSessionFactoryHolder``1">
+            <summary>
+            Sets the <see cref="T:Castle.ActiveRecord.Framework.ISessionFactoryHolder"/> to use. You should set this if you need to
+            use a custom implementation of that interface.
+            </summary>
+            <typeparam name="T">The implementation to use.</typeparam>
+            <returns>The fluent configuration itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentActiveRecordConfiguration.MakeLazyByDefault">
+            <summary>
+            Instructs ActiveRecord to use lazy loading unless otherwise specified on the collection.
+            By default, lazy loading is not used.
+            </summary>
+            <returns>The fluent configuration itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentActiveRecordConfiguration.VerifyModels">
+            <summary>
+            Instructs ActiveRecord to verify the models against the data stores on initialization.
+            By default, there is no verification
+            </summary>
+            <returns>The fluent configuration itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentActiveRecordConfiguration.RegisterSearch">
+            <summary>
+            Instructs ActiveRecord to register NHibernate.Search event listeners to allow full text search.
+            By default, there is no registration of these listeners.
+            </summary>
+            <returns>The fluent configuration itself.</returns>
+        </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.FluentNHibernateMapping">
+            <summary>
+            Extension of <see cref="T:Castle.ActiveRecord.Framework.Config.IMappingSpecification"/> to add FNH-mapped
+            NHibernate types.
+            </summary>
+        </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.IMappingSpecification">
+            <summary>
+            Extension points for adding types mapped by different ways to ActiveRecord.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentNHibernateMapping.InAssemblyOf``1">
+            <summary>
+            Searches for the ClassMap-types in the assembly of the specified type.
+            </summary>
+            <typeparam name="T">The type whose assembly will be searched.</typeparam>
+            <returns>The mapping object itself.</returns>
+        </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.FluentStorageConfiguration">
+            <summary>
+            Fluent configuration of ActiveRecord storage options.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageConfiguration.DefaultsFor``1">
+             <summary>
+             Sets reasonable defaults for the specified type of database.
+             </summary>
+             <typeparam name="T"></typeparam>
+            <returns>The fluent configuration itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageConfiguration.ConnectionStringName(System.String)">
+            <summary>
+             Sets the connection string per name
+            </summary>
+            <param name="connecctionStringName">The name of the connection string</param>
+            <returns>The fluent configuration itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageConfiguration.Driver``1">
+            <summary>
+             Sets the driver for the configuration
+            </summary>
+            <typeparam name="T">The driver class</typeparam>
+            <returns>The fluent configuration itself</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageConfiguration.ConnectionProvider``1">
+            <summary>
+            Sets the connection provider
+            </summary>
+            <typeparam name="T">The connection provider class to use.</typeparam>
+            <returns>The fluent configuration itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageConfiguration.Dialect``1">
+            <summary>
+            Sets the dialect.
+            </summary>
+            <typeparam name="T">The dialect type to use.</typeparam>
+            <returns>The fluent configuration itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageConfiguration.ProxiedBy``1">
+            <summary>
+            The proxy factory to use. This value defaults to 
+            <see cref="T:NHibernate.ByteCode.Castle.ProxyFactoryFactory"/>.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageConfiguration.ConnectionString(System.String)">
+            <summary>
+            Sets the connection string
+            </summary>
+            <param name="connectionString">The connection string to use.</param>
+            <returns>The fluent configuration itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageConfiguration.ShowSql">
+            <summary>
+            Switches SQL console output on.
+            </summary>
+            <returns>The fluent configuration itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageConfiguration.ShowSql(System.Boolean)">
+            <summary>
+            Switches SQL console output on or off.
+            </summary>
+            <param name="showSql">Whether to show the Sql or not.</param>
+            <returns>The fluent configuration itself.</returns>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.FluentStorageConfiguration.For">
+            <summary>
+            Adds an inital <see cref="T:Castle.ActiveRecord.Framework.Config.FluentStorageTypeSelection"/> that can be
+            used for specifying the types that use this storage configured.
+            </summary>
+        </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.FluentStorageTypeSelection">
+            <summary>
+             Fluent configuration of a storage type selection
+            </summary>
+        </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.StorageTypeSelection">
+            <summary>
+            Configuration of the types that will use a storage.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.StorageTypeSelection.Default">
+            <summary>
+            Determines whether the selection contains all types are not
+            specified elsewhere. Only one storage configuration may have
+            a type selection with this property being true.
+            </summary>
+        </member>
+        <member name="F:Castle.ActiveRecord.Framework.Config.FluentStorageTypeSelection.StorageConfiguration">
+            <summary>
+            Internal storage of the configuration this selection belongs to.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageTypeSelection.#ctor(Castle.ActiveRecord.Framework.Config.FluentStorageConfiguration)">
+            <summary>
+            Creates a new fluent selection configuration.
+            </summary>
+            <param name="storageConfiguration">The object that creates and uses the selection.</param>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageTypeSelection.AllOtherTypes">
+            <summary>
+            Sets the selection to be used for all types are not explicitly selected.
+            This may be used only on one storage configuration.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageTypeSelection.SubtypesOf``1">
+            <summary>
+            Selects the type and all subtypes of the type to use the storage.
+            </summary>
+            <typeparam name="T">The type to choose.</typeparam>
+            <returns>The fluent selection itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageTypeSelection.InNamespaceOf``1">
+            <summary>
+            Selects all types in or below the namespace of the given type.
+            </summary>
+            <typeparam name="T">The type to select.</typeparam>
+            <returns>The fluent selection itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageTypeSelection.MappedBy(Castle.ActiveRecord.Framework.Config.IMappingSpecification)">
+            <summary>
+            Sets the way the selected types are mapped. The default mapping is ActiveRecord
+            attributes.
+            </summary>
+            <param name="specification">The mapping specification</param>
+            <returns>The fluent selection itself.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.FluentStorageTypeSelection.TypesInAssemblyOf``1">
+            <summary>
+            Selects all types in the assembly of the given type.
+            </summary>
+            <typeparam name="T">The type to select.</typeparam>
+            <returns>The fluent selection itself.</returns>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.FluentStorageTypeSelection.As">
+            <summary>
+            The storage configuration that created the current selection.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Framework.Config.FluentStorageTypeSelection.And">
+            <summary>
+            Adds another selection to the storage configuration.
+            </summary>
+        </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.IDatabaseConfiguration">
+            <summary>
+            Defines basic NHibernate settings for a certain RDBMS.
+            </summary>
+        </member>
         <member name="T:Castle.ActiveRecord.Framework.Config.DatabaseType">
             <summary>
             Enum for database types support for configuration construction. 
@@ -3019,6 +3458,29 @@
             <summary>
             Microsoft SQL Server 2000
             </summary>
+        </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.MsSqlServer2000Configuration">
+            <summary>
+            Defines the defaults for Sql Server 2000
+            </summary>
+        </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.MsSqlServer2005Configuration">
+            <summary>
+            Defines the defaults for Sql Server 2005
+            </summary>
+        </member>
+        <member name="T:Castle.ActiveRecord.Framework.Config.XmlNhibernateMapping">
+            <summary>
+            Extension of <see cref="T:Castle.ActiveRecord.Framework.Config.IMappingSpecification"/> to add classically XML-mapped
+            NHibernate types.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.Config.XmlNhibernateMapping.InAssemblyOf``1">
+            <summary>
+            Searches for the XML files in the assembly of the specified type.
+            </summary>
+            <typeparam name="T">The type whose assembly will be searched.</typeparam>
+            <returns>The mapping object itself.</returns>
         </member>
         <member name="T:Castle.ActiveRecord.Framework.Internal.EventListener.EventListenerConfig">
             <summary>
@@ -6334,6 +6796,42 @@
             </summary>
             <param name="session">The <c>NHibernate</c>'s <see cref="T:NHibernate.ISession"/></param>
         </member>
+        <member name="T:Castle.ActiveRecord.Queries.ValueAndTypeTuple">
+            <summary>
+            Represents a query parameter value and type. Can be used to override the 
+            standard mechanism of determing parameter types.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.Queries.ValueAndTypeTuple.#ctor(System.Object)">
+            <summary>
+            Creates a new instance of ValueAndTypeTuple with no specific Type
+            </summary>
+            <param name="value">The value of the parameter</param>
+        </member>
+        <member name="M:Castle.ActiveRecord.Queries.ValueAndTypeTuple.#ctor(NHibernate.Type.IType,System.Object)">
+            <summary>
+            Creates a new instance of ValueAndTypeTuple with a specific Type
+            </summary>
+            <param name="type">The type of the parameter</param>
+            <param name="value">The value of the parameter</param>
+        </member>
+        <member name="M:Castle.ActiveRecord.Queries.ValueAndTypeTuple.Wrap(System.Object)">
+            <summary>
+            Creates a new ValueAndTypeTuple using the argument as the value
+            unless the argument is already a ValueAndTypeTuple, in which case
+            that is returned unmodified.
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Queries.ValueAndTypeTuple.Type">
+            <summary>
+            The parameter type
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.Queries.ValueAndTypeTuple.Value">
+            <summary>
+            The parameter value
+            </summary>
+        </member>
         <member name="T:Castle.ActiveRecord.Framework.Scopes.AbstractScope">
             <summary>
             Abstract <seealso cref="T:Castle.ActiveRecord.ISessionScope"/> implementation
@@ -6897,6 +7395,28 @@
             Gets the current scope
             </summary>
             <value>The current.</value>
+        </member>
+        <member name="T:Castle.ActiveRecord.StatelessSessionScope">
+            <summary>
+            Implementation of <see cref="T:Castle.ActiveRecord.ISessionScope"/> with
+            an IStatelessSession to improve performance 
+            by caching a session without a first-level-cache.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.StatelessSessionScope.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Castle.ActiveRecord.StatelessSessionScope"/> class.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.StatelessSessionScope.OpenSession(NHibernate.ISessionFactory,NHibernate.IInterceptor)">
+            <summary>
+            If the <see cref="P:Castle.ActiveRecord.Framework.Scopes.AbstractScope.WantsToCreateTheSession"/> returned
+            <c>true</c> then this method is invoked to allow
+            the scope to create a properly configured session
+            </summary>
+            <param name="sessionFactory">From where to open the session</param>
+            <param name="interceptor">the NHibernate interceptor</param>
+            <returns>the newly created session</returns>
         </member>
         <member name="T:Castle.ActiveRecord.Framework.Scopes.ThreadScopeAccessor">
             <summary>
@@ -9207,6 +9727,12 @@
             Delegate for use in <see cref="E:Castle.ActiveRecord.ActiveRecordStarter.ModelCreated"/>
             </summary>
         </member>
+        <member name="T:Castle.ActiveRecord.EventListenerRegistrationDelegate">
+            <summary>
+            Delegate for AR Facility registration hooks.
+            </summary>
+            <param name="contributor"></param>
+        </member>
         <member name="T:Castle.ActiveRecord.ActiveRecordStarter">
             <summary>
             Performs the framework initialization.
@@ -9446,6 +9972,16 @@
             <summary>
             Allows other frameworks to modify the ActiveRecordModel
             before the generation of the NHibernate XML configuration.
+            </summary>
+        </member>
+        <member name="E:Castle.ActiveRecord.ActiveRecordStarter.EventListenerComponentRegistrationHook">
+            <summary>
+            Allows the ActiveRecordFacility to register components as event listeners;
+            </summary>
+        </member>
+        <member name="E:Castle.ActiveRecord.ActiveRecordStarter.EventListenerFacilityConfigurationHook">
+            <summary>
+            Allows the ActiveRecordFacility to reconfigure registered listeners.
             </summary>
         </member>
         <member name="P:Castle.ActiveRecord.ActiveRecordStarter.IsInitialized">
@@ -10299,6 +10835,17 @@
             Replaces existing listeners instead of adding them if set to <code>true</code>.
             </summary>
         </member>
+        <member name="T:Castle.ActiveRecord.Framework.NHSearchContributor">
+            <summary>
+            Contributor to add the NHSearch event listeners
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.NHSearchContributor.Contribute(NHibernate.Cfg.Configuration)">
+            <summary>
+            The actual contribution method.
+            </summary>
+            <param name="configuration">The configuration to be modified.</param>
+        </member>
         <member name="T:Castle.ActiveRecord.NotFoundException">
             <summary>
             This exception is thrown when loading an entity by its PK failed because the entity did not exist.
@@ -10462,6 +11009,34 @@
             <param name="sender">The sender.</param>
             <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
         </member>
+        <member name="T:Castle.ActiveRecord.Framework.StatelessSessionWrapper">
+            <summary>
+            Wraps a NHibernate.IStatelessSession and provides an interface of type
+            <see cref="T:NHibernate.ISession"/> for it.
+            </summary>
+        </member>
+        <member name="F:Castle.ActiveRecord.Framework.StatelessSessionWrapper.statelessSession">
+            <summary>
+            The stateless session to delegate to.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.StatelessSessionWrapper.#ctor(NHibernate.IStatelessSession)">
+            <summary>
+            Builds a StatelessSessionWrapper.
+            </summary>
+            <param name="statelessSession">The stateless session to delegate to.</param>
+        </member>
+        <member name="T:Castle.ActiveRecord.Framework.NotWrappedException">
+            <summary>
+            Wraps a NotImplementedException with a preconfigured Catle-like
+            excweption message.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.Framework.NotWrappedException.#ctor">
+            <summary>
+            Calls the base class' constructor with the preconfigured message.
+            </summary>
+        </member>
         <member name="T:Castle.ActiveRecord.Framework.SupportingUtils">
             <summary>
             Contains utility methods for dealing with ActiveRecord objects
@@ -10598,6 +11173,86 @@
             <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"></see> that contains contextual information about the source or destination.</param>
             <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"></see> is zero (0). </exception>
             <exception cref="T:System.ArgumentNullException">The info parameter is null. </exception>
+        </member>
+        <member name="T:Castle.ActiveRecord.Testing.InMemoryConnectionProvider">
+            <summary>
+            ConnectionProvider for Sqlite in memory tests, that suppresses closing
+            the connection to keep the data until the test is finished.
+            </summary>
+        </member>
+        <member name="F:Castle.ActiveRecord.Testing.InMemoryConnectionProvider.Connection">
+            <summary>
+            The connection to the database
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.Testing.InMemoryConnectionProvider.GetConnection">
+            <summary>
+            Called by the framework.
+            </summary>
+            <returns>A connection to the database</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Testing.InMemoryConnectionProvider.CloseConnection(System.Data.IDbConnection)">
+            <summary>
+            No-Op.
+            </summary>
+            <param name="conn">The connection to close.</param>
+        </member>
+        <member name="M:Castle.ActiveRecord.Testing.InMemoryConnectionProvider.Restart">
+            <summary>
+            Closes the connection after the tests.
+            </summary>
+        </member>
+        <member name="T:Castle.ActiveRecord.Testing.InMemoryTest">
+            <summary>
+            Base class for in memory unit tests. This class does not contain any
+            attributes specific to a testing framework.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.Testing.InMemoryTest.SetUp">
+            <summary>
+            The common test setup code. To activate it in a specific test framework,
+            it must be called from a framework-specific setup-Method.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.Testing.InMemoryTest.TearDown">
+            <summary>
+            The common test teardown code. To activate it in a specific test framework,
+            it must be called from a framework-specific teardown-Method.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.Testing.InMemoryTest.GetTypes">
+            <summary>
+            Method that must be overridden by the test fixtures to return the types
+            that should be initialized. The stub returns an empty array.
+            </summary>
+            <returns>The types to initialize.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Testing.InMemoryTest.GetAssemblies">
+            <summary>
+            Method that must be overridden by the test fixtures to return the assemblies
+            that should be initialized. The stub returns an empty array.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Testing.InMemoryTest.GetAdditionalBaseClasses">
+            <summary>
+            Hook to allow the initialization of additional base classes. <see cref="T:Castle.ActiveRecord.ActiveRecordBase"/> is 
+            added everytime and must not be returned.
+            </summary>
+            <returns>An array of additional base classes for initialization</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Testing.InMemoryTest.GetProperties">
+            <summary>
+            Hook to add additional properties for each base class' configuration. As an example, "show_sql" can
+            be added to verify the behaviour of NHibernate in specific situations.
+            </summary>
+            <returns>A dictionary of additional or custom properties.</returns>
+        </member>
+        <member name="M:Castle.ActiveRecord.Testing.InMemoryTest.Configure(Castle.ActiveRecord.Framework.Config.InPlaceConfigurationSource)">
+            <summary>
+            Hook for modifying the configuration before initialization
+            </summary>
+            <param name="config"></param>
         </member>
     </members>
 </doc>

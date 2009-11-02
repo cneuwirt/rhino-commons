@@ -105,7 +105,7 @@ namespace Rhino.Commons.Binsor.Macros
 			_skip = false;
 			_applied = true;
 
-			if (block.HasStatements)
+			if (!block.IsEmpty)
 			{
 				for(int i = 0; i < block.Statements.Count;)
 				{
@@ -245,7 +245,7 @@ namespace Rhino.Commons.Binsor.Macros
 			}
 			else
 			{
-				if (configBlock.HasStatements)
+				if (!configBlock.IsEmpty)
 				{
 					HashConfigurationBuilder nested = new HashConfigurationBuilder();
 					if (nested.BuildConfig(configBlock, _compileErrors) &&

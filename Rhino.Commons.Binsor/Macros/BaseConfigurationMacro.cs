@@ -46,13 +46,13 @@ namespace Rhino.Commons.Binsor.Macros
 		                                        MacroStatement macro, MacroStatement parent,
 		                                        ref Statement expansion)
 		{
-			if (macro.Block != null)
+			if (macro.Body != null)
 			{
 				PromoteExtensions(macro, parent);
 
 				HashConfigurationBuilder builder = new HashConfigurationBuilder();
 
-				if (builder.BuildConfig(macro.Block, Errors) && builder.HasConfiguration)
+				if (builder.BuildConfig(macro.Body, Errors) && builder.HasConfiguration)
 				{
 					extension.Arguments.Add(builder.HashConfiguration);
 					return true;

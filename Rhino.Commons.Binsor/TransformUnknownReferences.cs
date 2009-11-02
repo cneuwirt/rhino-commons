@@ -30,9 +30,11 @@
 
 using System;
 using System.Reflection;
+using Boo.Lang.Compiler;
 using Boo.Lang.Compiler.Ast;
 using Boo.Lang.Compiler.Steps;
 using Boo.Lang.Compiler.TypeSystem;
+using Boo.Lang.Compiler.TypeSystem.Reflection;
 
 namespace Rhino.Commons.Binsor
 {
@@ -112,7 +114,7 @@ namespace Rhino.Commons.Binsor
 				constructorInfo = _componentReferenceTypeConstructor;
 				argument = CodeBuilder.CreateReference(entity);
 			}
-			ExternalConstructor constructor = new ExternalConstructor(TypeSystemServices, constructorInfo);
+            ExternalConstructor constructor = new ExternalConstructor(My<IReflectionTypeSystemProvider>.Instance, constructorInfo);
 			MethodInvocationExpression invocation = CodeBuilder.CreateConstructorInvocation(constructor, argument);
 			node.ParentNode.Replace(node, invocation);			
 		}

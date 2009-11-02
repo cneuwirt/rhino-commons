@@ -63,7 +63,7 @@ namespace Rhino.Commons.Binsor.Macros
 		private bool ProcessAttributes(MacroStatement macro)
 		{
 			HashConfigurationBuilder builder = new HashConfigurationBuilder();
-			if (!builder.BuildAttributes(macro.Block, Errors))
+			if (!builder.BuildAttributes(macro.Body, Errors))
 			{
 				return false;
 			}
