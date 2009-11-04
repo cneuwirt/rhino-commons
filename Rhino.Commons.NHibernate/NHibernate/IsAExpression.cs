@@ -135,8 +135,9 @@ namespace Rhino.Commons
 
 			if (queryable == null)
 			{
-				queryable = SessionFactoryHelper.FindQueryableUsingImports(
-				   criteriaQuery.Factory, _entityClass.FullName);
+                var sessionFactoryHelper = new SessionFactoryHelper(criteriaQuery.Factory);
+
+                queryable = sessionFactoryHelper.FindQueryableUsingImports(_entityClass.FullName);
 			}
 
 			return queryable;
