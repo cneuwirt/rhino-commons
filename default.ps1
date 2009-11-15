@@ -74,6 +74,7 @@ task Init -depends Clean {
 	new-item $release_dir -itemType directory 
 	new-item $buildartifacts_dir -itemType directory 
 	cp $tools_dir\MbUnit\*.* $build_dir
+    cp $lib_dir\SqlCE\*.* $build_dir
 } 
 
 task Compile -depends Init { 

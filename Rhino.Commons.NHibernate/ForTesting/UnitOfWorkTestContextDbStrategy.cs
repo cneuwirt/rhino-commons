@@ -184,6 +184,7 @@ namespace Rhino.Commons.ForTesting
                 properties.Add(Environment.ConnectionString, connectionString);
                 properties.Add(Environment.ShowSql, "true");
                 properties.Add(Environment.ReleaseConnections, "on_close");
+                properties.Add(Environment.Hbm2ddlKeyWords, "none");
             }
 
 
@@ -218,6 +219,7 @@ namespace Rhino.Commons.ForTesting
                 properties.Add(Environment.ReleaseConnections, "on_close");
                 //by specifying a default schema, nhibernate's dynamic sql queries benefit from caching
                 properties.Add(Environment.DefaultSchema, string.Format("{0}.dbo", DatabaseName));
+                properties.Add(Environment.Hbm2ddlKeyWords, "none");
             }
 
 
@@ -322,6 +324,7 @@ namespace Rhino.Commons.ForTesting
                 properties.Add(Environment.ConnectionString, connectionString);
                 properties.Add(Environment.ShowSql, "true");
                 properties.Add(Environment.ReleaseConnections, "on_close");
+                properties.Add(Environment.Hbm2ddlKeyWords, "none");
             }
 
             public override DatabaseEngine DatabaseEngine
