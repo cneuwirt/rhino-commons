@@ -33,7 +33,7 @@ using Castle.MicroKernel.Registration;
 
 namespace Rhino.Commons.Binsor
 {
-	public abstract class AbstractComponentExtension : ComponentDescriptor, IComponentExtension
+	public abstract class AbstractComponentExtension : ComponentDescriptor<object>, IComponentExtension
 	{
 		public virtual void Apply(Component component, ComponentRegistration registration)
 		{

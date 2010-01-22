@@ -33,7 +33,7 @@
             </summary>
             <returns>the node name on the configuration</returns>
         </member>
-        <member name="M:Castle.Facilities.AutomaticTransactionManagement.TransactionComponentInspector.ProcessMeta(Castle.Core.ComponentModel,System.Reflection.MethodInfo[],Castle.Core.MethodMetaModel)">
+        <member name="M:Castle.Facilities.AutomaticTransactionManagement.TransactionComponentInspector.ProcessMeta(Castle.Core.ComponentModel,System.Collections.Generic.IList{System.Reflection.MethodInfo},Castle.Core.MethodMetaModel)">
             <summary>
             Processes the meta information available on
             the component configuration. (overrides MethodMetaInspector.ProcessMeta)
