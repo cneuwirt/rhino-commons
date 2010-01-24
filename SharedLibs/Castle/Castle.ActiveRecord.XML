@@ -7308,6 +7308,29 @@
             Always <c>true</c>, we take sessions from the <see cref="T:Castle.ActiveRecord.IConversation"/>.
             </summary>
         </member>
+        <member name="T:Castle.ActiveRecord.ConversationCanceledEventArgs">
+            <summary>
+            Event arguments for the Canceled-event.
+            </summary>
+        </member>
+        <member name="M:Castle.ActiveRecord.ConversationCanceledEventArgs.#ctor(System.Boolean,System.Exception)">
+            <summary>
+            Creates an instance.
+            </summary>
+            <param name="canceledByUser">Whether the conversation was user-canceled.</param>
+            <param name="exception">The exception causing the conversation to cancel.</param>
+        </member>
+        <member name="P:Castle.ActiveRecord.ConversationCanceledEventArgs.CanceledByUser">
+            <summary>
+            Was the conversation canceld by a call to
+            <see cref="M:Castle.ActiveRecord.IConversation.Cancel"/>?
+            </summary>
+        </member>
+        <member name="P:Castle.ActiveRecord.ConversationCanceledEventArgs.Exception">
+            <summary>
+            Holds the exception caused the cancellation, if any.
+            </summary>
+        </member>
         <member name="T:Castle.ActiveRecord.Framework.Scopes.DifferentDatabaseScope">
             <summary>
             Still very experimental and it's not bullet proof
@@ -7485,6 +7508,30 @@
             </remarks>
             </summary>
         </member>
+        <member name="M:Castle.ActiveRecord.IConversation.Execute(System.Action)">
+            <summary>
+            Executes a block of code in the context of the
+            conversation. This allows to use ActiveRecord
+            without any scopes by doing all persistence calls
+            within Execute.
+            If an exception is caught, the conversation is
+            automatically canceled and the exception handed
+            down to the calling code. 
+            </summary>
+            <param name="action">The code to execute</param>
+            <remarks>
+            This allows to use the interface directly, for example
+            if it is served through an IoC-Container.
+            </remarks>
+        </member>
+        <member name="M:Castle.ActiveRecord.IConversation.ExecuteSilently(System.Action)">
+            <summary>
+            Executes a block of code. The conversation is canceled
+            if an exception occurs, but the exception will not be
+            handed to the calling code.
+            </summary>
+            <param name="action">The code to execute</param>
+        </member>
         <member name="P:Castle.ActiveRecord.IConversation.FlushMode">
             <summary>
             The FlushMode to use. Setting the Flushmode via
@@ -7495,9 +7542,14 @@
             the conversation is actually used.
             </summary>
         </member>
-        <member name="P:Castle.ActiveRecord.IConversation.Canceled">
+        <member name="P:Castle.ActiveRecord.IConversation.IsCanceled">
             <summary>
             Whether the conversation is canceled
+            </summary>
+        </member>
+        <member name="E:Castle.ActiveRecord.IConversation.Canceled">
+            <summary>
+            Fired when the conversation is canceled.
             </summary>
         </member>
         <member name="T:Castle.ActiveRecord.IScopeConversation">
@@ -7570,13 +7622,29 @@
         <member name="M:Castle.ActiveRecord.ScopedConversation.Restart">
             <inheritDoc />
         </member>
+        <member name="M:Castle.ActiveRecord.ScopedConversation.Execute(System.Action,System.Boolean)">
+            <summary>
+            Executes the action.
+            </summary>
+            <param name="action">The action</param>
+            <param name="silently">Whether to throw on exception</param>
+        </member>
         <member name="M:Castle.ActiveRecord.ScopedConversation.GetSession(NHibernate.ISessionFactory,NHibernate.IInterceptor)">
+            <inheritDoc />
+        </member>
+        <member name="M:Castle.ActiveRecord.ScopedConversation.Execute(System.Action)">
+            <inheritDoc />
+        </member>
+        <member name="M:Castle.ActiveRecord.ScopedConversation.ExecuteSilently(System.Action)">
             <inheritDoc />
         </member>
         <member name="P:Castle.ActiveRecord.ScopedConversation.FlushMode">
             <inheritDoc />
         </member>
-        <member name="P:Castle.ActiveRecord.ScopedConversation.Canceled">
+        <member name="P:Castle.ActiveRecord.ScopedConversation.IsCanceled">
+            <inheritDoc />
+        </member>
+        <member name="E:Castle.ActiveRecord.ScopedConversation.Canceled">
             <inheritDoc />
         </member>
         <member name="T:Castle.ActiveRecord.Framework.Scopes.ScopeMachineryException">
