@@ -759,6 +759,46 @@
             </summary>
             <param name="key"></param>
         </member>
+        <member name="M:Castle.Facilities.Startable.StartableFacilityRegistrationExtensions.StartUsingMethod``1(Castle.MicroKernel.Registration.ComponentRegistration{``0},System.String)">
+            <summary>
+            Assigns the start method for the startable.
+            </summary>
+            <param name="registration"></param>
+            <param name="startMethod">The start method.</param>
+            <returns></returns>
+            <remarks>Be sure that you first added the <see cref="T:Castle.Facilities.Startable.StartableFacility"/> 
+            to the kernel, before registering this component.</remarks>
+        </member>
+        <member name="M:Castle.Facilities.Startable.StartableFacilityRegistrationExtensions.StartUsingMethod``1(Castle.MicroKernel.Registration.ComponentRegistration{``0},System.Linq.Expressions.Expression{System.Func{``0,System.Action}})">
+            <summary>
+            Assigns the start method for the startable.
+            </summary>
+            <param name="registration"></param>
+            <param name="methodToUse">Method to use. something like: StartUsingMethod(s =&gt; s.Start)</param>
+            <returns></returns>
+            <remarks>Be sure that you first added the <see cref="T:Castle.Facilities.Startable.StartableFacility"/> 
+            to the kernel, before registering this component.</remarks>
+        </member>
+        <member name="M:Castle.Facilities.Startable.StartableFacilityRegistrationExtensions.StopUsingMethod``1(Castle.MicroKernel.Registration.ComponentRegistration{``0},System.String)">
+            <summary>
+            Assigns the stop method for the startable.
+            </summary>
+            <param name="registration"></param>
+            <param name="stopMethod">The stop method.</param>
+            <returns></returns>
+            <remarks>Be sure that you first added the <see cref="T:Castle.Facilities.Startable.StartableFacility"/> 
+            to the kernel, before registering this component.</remarks>
+        </member>
+        <member name="M:Castle.Facilities.Startable.StartableFacilityRegistrationExtensions.StopUsingMethod``1(Castle.MicroKernel.Registration.ComponentRegistration{``0},System.Linq.Expressions.Expression{System.Func{``0,System.Action}})">
+            <summary>
+            Assigns the stop method for the startable.
+            </summary>
+            <param name="registration"></param>
+            <param name="methodToUse">Method to use. something like: StartUsingMethod(s =&gt; s.Start)</param>
+            <returns></returns>
+            <remarks>Be sure that you first added the <see cref="T:Castle.Facilities.Startable.StartableFacility"/> 
+            to the kernel, before registering this component.</remarks>
+        </member>
         <member name="T:Castle.MicroKernel.LifecycleConcerns.ILifecycleConcern">
             <summary>
             Represents a concern that will be applied to a component instance
@@ -1644,6 +1684,28 @@
             </summary>
             <value>The contributors.</value>
         </member>
+        <member name="T:Castle.MicroKernel.Proxy.ComponentReference`1">
+            <summary>
+            Reference to component obtained from a container.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:Castle.MicroKernel.Proxy.IReference`1">
+            <summary>
+            Represents obtained just in time object.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Castle.MicroKernel.Proxy.IReference`1.Resolve(Castle.MicroKernel.IKernel,Castle.MicroKernel.CreationContext)">
+            <summary>
+            Resolves object referenced by this reference, optionally using provided <paramref name="kernel"/>.
+            If object is resolved from the kernel, the <paramref name="context"/>should be used to guard
+            against against cyclic dependencies.
+            </summary>
+            <param name="kernel"></param>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
         <member name="T:Castle.MicroKernel.Proxy.IModelInterceptorsSelector">
             <summary>
             Select the appropriate interecptors based on the application specific
@@ -1673,6 +1735,12 @@
             </summary>
             <param name="model">The model</param>
             <returns>Whatever this selector is likely to add intereceptors to the specified model</returns>
+        </member>
+        <member name="T:Castle.MicroKernel.Proxy.InstanceReference`1">
+            <summary>
+            Represents a reference to an existing object.
+            </summary>
+            <typeparam name="T"></typeparam>
         </member>
         <member name="T:Castle.MicroKernel.IProxyFactory">
             <summary>
@@ -1792,6 +1860,12 @@
             Adds the additional mix ins to integrate.
             </summary>
             <param name="mixIns">The mix ins.</param>
+        </member>
+        <member name="M:Castle.MicroKernel.Proxy.ProxyOptions.AddMixinReference(Castle.MicroKernel.Proxy.IReference{System.Object})">
+            <summary>
+            Adds the additional mix in to integrate.
+            </summary>
+            <param name="mixIn">The mix in.</param>
         </member>
         <member name="M:Castle.MicroKernel.Proxy.ProxyOptions.Equals(System.Object)">
             <summary>
@@ -2685,32 +2759,6 @@
             <param name="selector"></param>
             <returns></returns>
         </member>
-        <member name="M:Castle.MicroKernel.Registration.ComponentRegistration`1.Startable">
-            <summary>
-            Marks the component as startable.
-            </summary>
-            <returns></returns>
-            <remarks>Be sure that you first added the <see cref="T:Castle.Facilities.Startable.StartableFacility"/> 
-            to the kernel, before registering this component.</remarks>
-        </member>
-        <member name="M:Castle.MicroKernel.Registration.ComponentRegistration`1.StartUsingMethod(System.String)">
-            <summary>
-            Assigns the start method for the startable.
-            </summary>
-            <param name="startMethod">The start method.</param>
-            <returns></returns>
-            <remarks>Be sure that you first added the <see cref="T:Castle.Facilities.Startable.StartableFacility"/> 
-            to the kernel, before registering this component.</remarks>
-        </member>
-        <member name="M:Castle.MicroKernel.Registration.ComponentRegistration`1.StopUsingMethod(System.String)">
-            <summary>
-            Assigns the stop method for the startable.
-            </summary>
-            <param name="stopMethod">The stop method.</param>
-            <returns></returns>
-            <remarks>Be sure that you first added the <see cref="T:Castle.Facilities.Startable.StartableFacility"/> 
-            to the kernel, before registering this component.</remarks>
-        </member>
         <member name="M:Castle.MicroKernel.Registration.ComponentRegistration`1.OnCreate(Castle.MicroKernel.LifecycleConcerns.OnCreateActionDelegate{`0}[])">
             <summary>
             Stores a set of <see cref="T:Castle.MicroKernel.LifecycleConcerns.OnCreateActionDelegate`1"/> which will be invoked when the component
@@ -2780,7 +2828,7 @@
             <param name="descriptor">The descriptor.</param>
             <returns></returns>
         </member>
-        <member name="M:Castle.MicroKernel.Registration.ComponentRegistration`1.UsingFactoryMethod``1(Castle.MicroKernel.Registration.Function{``0})">
+        <member name="M:Castle.MicroKernel.Registration.ComponentRegistration`1.UsingFactoryMethod``1(System.Func{``0})">
             <summary>
             Uses a factory method to instantiate the component.
             Requires the <see cref="T:Castle.Facilities.FactorySupport.FactorySupportFacility"/> to be installed.
@@ -2863,30 +2911,6 @@
             For example singleton and transient (also known as 'factory').
             </summary>
             <value>The with lifestyle.</value>
-        </member>
-        <member name="T:Castle.MicroKernel.Registration.KernelToT`1">
-            <summary>
-            Helper wrapper around Converter
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="T:Castle.MicroKernel.Registration.GenericFactory`1">
-            <summary>
-            Helper factory class
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="T:Castle.MicroKernel.Registration.GenericFactoryWithContext`1">
-            <summary>
-            Helper factory class
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="T:Castle.MicroKernel.Registration.GenericFactoryWithKernel`1">
-            <summary>
-            Helper factory class
-            </summary>
-            <typeparam name="T"></typeparam>
         </member>
         <member name="T:Castle.MicroKernel.Registration.ComponentRegistration">
             <summary>

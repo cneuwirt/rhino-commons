@@ -26,7 +26,7 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
-
+using Castle.Facilities.Startable;
 using Castle.MicroKernel.Registration;
 
 namespace Rhino.Commons.Binsor
@@ -48,8 +48,6 @@ namespace Rhino.Commons.Binsor
 
 		void IComponentExtension.Apply(Component component, ComponentRegistration registration)
 		{
-			registration.Startable();
-
 			if (!string.IsNullOrEmpty(startMethod))
 			{
 				registration.StartUsingMethod(startMethod);
