@@ -38,28 +38,23 @@ namespace Rhino.Commons.Binsor.Macros
 	{
 		private readonly string _name;
 		private readonly bool _noStatements;
-		private readonly string[] _validParents;
 
-		protected BaseBinsorExtensionMacro(string name, bool noStatements,
-		                                   params string[] validParents)
+		protected BaseBinsorExtensionMacro(string name, bool noStatements)
 		{
 			_name = name;
 			_noStatements = noStatements;
-			_validParents = validParents;
 		}
 
 		public override Statement Expand(MacroStatement macro)
 		{
-			MacroStatement parent;
 			Statement expansion = null;
+			var parent = (MacroStatement)macro.ParentNode.ParentNode;
 
-			if (ValidateParent(macro, out parent) &&
-			    (!_noStatements || EnsureNoStatements(macro, _name)))
+			if ((_noStatements == false || EnsureNoStatements(macro, _name)))
 			{
-				MethodInvocationExpression extension = CreateExtension();
+				var extension = CreateExtension();
 
-				if (ExpandExtension(ref extension, macro, parent, ref expansion) &&
-				    extension != null)
+				if (ExpandExtension(ref extension, macro, parent, ref expansion) && extension != null)
 				{
 					RegisterExtension(parent, extension);
 				}
@@ -82,26 +77,36 @@ namespace Rhino.Commons.Binsor.Macros
 				);
 		}
 
-		private bool ValidateParent(MacroStatement macro, out MacroStatement parent)
+		protected static ReferenceExpression ObtainServiceType(MacroStatement macro)
 		{
-			parent = macro.ParentNode.ParentNode as MacroStatement;
+			int argIndex = 0;
 
-			if (parent != null)
+			foreach (var argument in macro.Arguments)
 			{
-				foreach(string validParent in _validParents)
+				if (argument is BinaryExpression)
 				{
-					if (parent.Name.Equals(validParent, StringComparison.InvariantCultureIgnoreCase))
+					var binary = (BinaryExpression)argument;
+
+					switch (binary.Operator)
 					{
-						return true;
+						case BinaryOperatorType.Assign:
+							if (binary.Right is BinaryExpression)
+							{
+								binary = (BinaryExpression)binary.Right;
+							}
+							break;
 					}
+					return (ReferenceExpression)binary.Right;
 				}
+				else if (macro.Arguments.Count == 1 || argIndex == 1)
+				{
+					return (ReferenceExpression)argument;
+				}
+
+				++argIndex;
 			}
 
-			AddCompilerError(macro.LexicalInfo,
-			                 string.Format("A {0} statement can appear only under a {1}", _name,
-			                               string.Join(" | ", _validParents)));
-
-			return false;
+			return null;
 		}
 	}
 }

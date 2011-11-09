@@ -28,17 +28,17 @@
 
 #endregion
 
-
 using System;
 using Boo.Lang.Compiler;
 using Boo.Lang.Compiler.Ast;
+using Castle.MicroKernel;
 
 namespace Rhino.Commons.Binsor.Macros
 {
 	[CLSCompliant(false)]
 	public class CreateUsingMacro : BaseBinsorExtensionMacro<FactorySupportExtension>
 	{
-		public CreateUsingMacro() : base("createUsing", true, "component", "extend")
+		public CreateUsingMacro() : base("createUsing", false)
 		{	
 		}
 
@@ -46,7 +46,7 @@ namespace Rhino.Commons.Binsor.Macros
 												MacroStatement macro, MacroStatement parent,
 												ref Statement expansion)
 		{
-			CreateUsingVisitor visitor = new CreateUsingVisitor();
+			var visitor = new CreateUsingVisitor();
 			return visitor.InitializeExtension(extension, macro, Errors);
 		}
 	}
@@ -64,14 +64,27 @@ namespace Rhino.Commons.Binsor.Macros
 			_extension = extension;
 			_compileErrors = compileErrors;
 
-			if (macro.Arguments.Count != 1 ||
-			    (!ExtractMethod(macro.Arguments[0]) && _instanceAcessor == null))
+			if (macro.Body.IsEmpty)
 			{
-				_compileErrors.Add(CompilerErrorFactory.CustomError(macro.LexicalInfo,
-					"A createUsing statement must be in the form @factory.<CreateMethod>[()]"));
-				return false;
+				if (macro.Arguments.Count != 1 ||
+					(ExtractMethod(macro.Arguments[0]) == false && _instanceAcessor == null))
+				{
+					_compileErrors.Add(CompilerErrorFactory.CustomError(macro.LexicalInfo,
+						"A createUsing statement must be in the form (@factory.<CreateMethod> | InstanceMethod)"));
+					return false;
+				}
+				ConfigureFactoryAccessor();
+			}
+			else
+			{
+				ConfigureFactoryMethod(macro);
 			}
 
+			return true;
+		}
+
+		private void ConfigureFactoryAccessor()
+		{
 			if (_instanceAcessor == null)
 			{
 				_extension.Arguments.Add(Component);
@@ -81,8 +94,31 @@ namespace Rhino.Commons.Binsor.Macros
 			{
 				_extension.Arguments.Add(_instanceAcessor);
 			}
+		}
 
-			return true;
+		private void ConfigureFactoryMethod(MacroStatement macro)
+		{
+			var kernelParameter = "kernel";
+			var factoryMethod = new BlockExpression(macro.Body);
+
+			if (macro.Arguments.Count == 1)
+			{
+				var kernel = macro.Arguments[0] as ReferenceExpression;
+				kernelParameter = kernel.ToCodeString();
+			}
+
+			factoryMethod.Parameters.Add(new ParameterDeclaration(kernelParameter,
+					CompilerContext.Current.CodeBuilder.CreateTypeReference(typeof(IKernel))));
+
+			var last = macro.Body.LastStatement;
+			if (last is ReturnStatement == false)
+			{
+				macro.Body.Statements.Remove(last);
+				var result = (ExpressionStatement)last;
+				macro.Body.Statements.Add(new ReturnStatement(last.LexicalInfo, result.Expression));
+			}
+
+			_extension.Arguments.Add(factoryMethod);
 		}
 
 		public override void OnReferenceExpression(ReferenceExpression accessor)

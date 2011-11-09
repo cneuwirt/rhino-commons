@@ -28,22 +28,21 @@
 
 #endregion
 
+using System.Collections;
 
 namespace Rhino.Commons
 {
 	using System;
 	using System.IO;
+	using Binsor;
 	using Castle.Core.Resource;
 	using Castle.MicroKernel;
-    using Castle.MicroKernel.SubSystems;
-    using Castle.MicroKernel.SubSystems.Resource;
 	using Castle.MicroKernel.SubSystems.Conversion;
-
+	using Castle.MicroKernel.SubSystems.Resource;
 	using Castle.Windsor;
 	using Castle.Windsor.Configuration;
 	using Castle.Windsor.Configuration.Interpreters;
 	using Castle.Windsor.Installer;
-    using Binsor;
 
 	public class RhinoContainer : WindsorContainer
 	{
@@ -65,8 +64,8 @@ namespace Rhino.Commons
         public RhinoContainer(CustomUri uri, IEnvironmentInfo env)
             : base(new DefaultKernel(), CreateInterpreter(uri,env))
         {
-            IResourceSubSystem system = (IResourceSubSystem) Kernel.GetSubSystem(SubSystemConstants.ResourceKey);
-            IResource resource = system.CreateResource(uri);
+			var system = (IResourceSubSystem)Kernel.GetSubSystem(SubSystemConstants.ResourceKey);
+			var resource = system.CreateResource(uri);
 
             if (IsBoo(uri))
 			{
@@ -144,8 +143,7 @@ namespace Rhino.Commons
 		private void InitalizeFromConfigurationSource(IConfigurationInterpreter interpreter,
 		                                              IEnvironmentInfo env)
 		{
-			DefaultConversionManager conversionManager =
-				(DefaultConversionManager) Kernel.GetSubSystem(SubSystemConstants.ConversionManagerKey);
+			var conversionManager = (DefaultConversionManager)Kernel.GetSubSystem(SubSystemConstants.ConversionManagerKey);
 			conversionManager.Add(new ConfigurationObjectConverter());
 
 			if (env != null)
@@ -153,7 +151,7 @@ namespace Rhino.Commons
 				interpreter.EnvironmentName = env.GetEnvironmentName();
 			}
 
-			interpreter.ProcessResource(interpreter.Source, Kernel.ConfigurationStore);
+			interpreter.ProcessResource(interpreter.Source, Kernel.ConfigurationStore, Kernel);
 			RunInstaller();
 		}
 
@@ -163,10 +161,16 @@ namespace Rhino.Commons
 			return base.Resolve<T>(key);
 		}
 
-		public override object Resolve(string key)
+		public override T Resolve<T>(string key, object argumentsAsAnonymousType)
 		{
 			AssertNotDisposed();
-			return base.Resolve(key);
+			return base.Resolve<T>(key, argumentsAsAnonymousType);
+		}
+
+		public override T Resolve<T>(string key, IDictionary arguments)
+		{
+			AssertNotDisposed();
+			return base.Resolve<T>(key, arguments);
 		}
 
 		public override object Resolve(string key, Type service)

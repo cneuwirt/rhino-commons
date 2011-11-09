@@ -61,7 +61,7 @@ namespace Rhino.Commons.Binsor.Macros
 			{
 				if (arg is BinaryExpression)
 				{
-					BinaryExpression binary = (BinaryExpression)arg;
+					var binary = (BinaryExpression)arg;
 
 					switch (binary.Operator)
 					{
@@ -69,7 +69,7 @@ namespace Rhino.Commons.Binsor.Macros
 							yield return binary.Left;
 							if (binary.Right is BinaryExpression)
 							{
-								BinaryExpression impl = (BinaryExpression)binary.Right;
+								var impl = (BinaryExpression)binary.Right;
 								if (impl.Operator == BinaryOperatorType.LessThan)
 								{
 									implementation = impl.Left;
@@ -87,7 +87,7 @@ namespace Rhino.Commons.Binsor.Macros
 						case BinaryOperatorType.LessThan:
 							if (binary.Left is BinaryExpression)
 							{
-								BinaryExpression impl = (BinaryExpression)binary.Left;
+								var impl = (BinaryExpression)binary.Left;
 								if (impl.Operator == BinaryOperatorType.ReferenceEquality)
 								{
 									yield return impl.Left;

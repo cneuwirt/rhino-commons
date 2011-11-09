@@ -26,7 +26,6 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
-
 using System.Collections;
 using Castle.Core.Configuration;
 
@@ -61,11 +60,11 @@ namespace Rhino.Commons.Binsor.Configuration
 
 		public void Build(IConfiguration parent, object configValue)
 		{
-			ICollection list = (ICollection)configValue;
+			var list = (ICollection)configValue;
 
 			if (!string.IsNullOrEmpty(_name))
 			{
-				IConfiguration config = ConfigurationHelper.CreateChild(parent, _name, null);
+				var config = ConfigurationHelper.CreateChild(parent, _name, null);
 				parent = config;
 			}
 

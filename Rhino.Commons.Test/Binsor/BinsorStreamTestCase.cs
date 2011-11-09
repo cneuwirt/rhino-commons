@@ -60,13 +60,13 @@ namespace Rhino.Commons.Test.Binsor
 		[Test]
 		public void CanUseLoops()
 		{
-			Fubar foo1 = (Fubar)_container.Resolve("foo_1");
+			Fubar foo1 = (Fubar)_container.Resolve("foo_1", new Arguments());
 			Assert.IsNotNull(foo1);
 			Assert.AreEqual(1, foo1.Foo);
-			Fubar foo2 = (Fubar)_container.Resolve("foo_2");
+			Fubar foo2 = (Fubar)_container.Resolve("foo_2", new Arguments());
 			Assert.IsNotNull(foo2);
 			Assert.AreEqual(2, foo2.Foo);
-			Fubar foo3 = (Fubar)_container.Resolve("foo_3");
+			Fubar foo3 = (Fubar)_container.Resolve("foo_3", new Arguments());
 			Assert.IsNotNull(foo3);
 			Assert.AreEqual(3, foo3.Foo);
 		}

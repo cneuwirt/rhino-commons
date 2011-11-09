@@ -33,8 +33,6 @@ namespace Rhino.Commons.Binsor.Configuration
 	using System;
 	using System.Collections;
 	using Castle.Core.Configuration;
-	using global::Boo.Lang.Compiler.Ast;
-	using global::Boo.Lang.Compiler.MetaProgramming;
 
 	public class KeyValuesBuilder : KeyMapBuilder
 	{
@@ -57,7 +55,7 @@ namespace Rhino.Commons.Binsor.Configuration
 
 		protected override void Build(IConfiguration parent, DictionaryEntry entry)
 		{
-			IConfiguration child = ConfigurationHelper.CreateChild(parent, item, null);
+			var child = ConfigurationHelper.CreateChild(parent, item, null);
 			child.Attributes[key] = entry.Key.ToString();
 			ConfigurationHelper.SetConfigurationValue(child, _value, entry.Value, null, true);
 		}

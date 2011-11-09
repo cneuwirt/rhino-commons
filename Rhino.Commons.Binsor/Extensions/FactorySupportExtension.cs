@@ -26,9 +26,10 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
-
-using Castle.Core.Configuration;
+using System;
+using Castle.Core;
 using Castle.MicroKernel;
+using Castle.MicroKernel.Registration;
 
 namespace Rhino.Commons.Binsor
 {
@@ -37,6 +38,7 @@ namespace Rhino.Commons.Binsor
 		private readonly string factoryId;
 		private readonly string factoryCreate;
 		private readonly string instanceAccessor;
+		private readonly Converter<IKernel, object> factoryMethod;
 
 		public FactorySupportExtension(string instanceAccessor)
 		{
@@ -49,16 +51,35 @@ namespace Rhino.Commons.Binsor
 			this.factoryCreate = factoryCreate;
 		}
 
-		protected override void ApplyToConfiguration(IKernel kernel, IConfiguration compConfig)
+		public FactorySupportExtension(Converter<IKernel, object> factoryMethod)
 		{
-			if (instanceAccessor == null)
+			this.factoryMethod = factoryMethod;
+		}
+
+		public override void Apply(Component component, ComponentRegistration registration)
+		{
+			if (factoryMethod == null)
 			{
-				compConfig.Attributes["factoryId"] = factoryId;
-				compConfig.Attributes["factoryCreate"] = factoryCreate;
+				base.Apply(component, registration);
 			}
 			else
 			{
-				compConfig.Attributes["instance-accessor"] = instanceAccessor;
+				registration.UsingFactoryMethod(factoryMethod);
+			}
+		}
+
+		public override void ConfigureComponentModel(IKernel kernel, ComponentModel model)
+		{
+			var confifuration = model.Configuration;
+
+			if (instanceAccessor == null)
+			{
+				confifuration.Attributes["factoryId"] = factoryId;
+				confifuration.Attributes["factoryCreate"] = factoryCreate;
+			}
+			else
+			{
+				confifuration.Attributes["instance-accessor"] = instanceAccessor;
 			}
 		}
 	}

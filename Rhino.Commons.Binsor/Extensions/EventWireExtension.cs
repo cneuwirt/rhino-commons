@@ -28,8 +28,8 @@
 
 #endregion
 
-
 using System.Collections;
+using Castle.Core;
 using Castle.Core.Configuration;
 using Castle.MicroKernel;
 
@@ -46,19 +46,21 @@ namespace Rhino.Commons.Binsor
 			_subscribers = subscribers;
 		}
 
-		protected override void ApplyToConfiguration(IKernel kernel, IConfiguration compConfig)
+		public override void BuildComponentModel(IKernel kernel, ComponentModel model)
 		{
+			var configuration = model.Configuration;
+
 			if (_subscribers.Count > 0)
 			{
-				IConfiguration subscribers = ObtainSubscribers(compConfig);
+				var subscribers = ObtainSubscribers(configuration);
 
-				foreach (DictionaryEntry entry in _subscribers)
+				foreach (var entry in _subscribers)
 				{
-					IConfiguration subscriber = new MutableConfiguration("subscriber");
-					ComponentReference componentId = (ComponentReference)entry.Key;
+					var subscriber = new MutableConfiguration("subscriber");
+					var componentId = (ComponentReference)((DictionaryEntry)entry).Key;
 					subscriber.Attributes["event"] = _eventName;
-					subscriber.Attributes["id"] = componentId.Name;
-					subscriber.Attributes["handler"] = entry.Value.ToString();
+					subscriber.Attributes["id"] = ((ComponentReference)componentId).Name;
+					subscriber.Attributes["handler"] = ((DictionaryEntry)entry).Value.ToString();
 					subscribers.Children.Add(subscriber);
 				}
 			}
@@ -66,7 +68,7 @@ namespace Rhino.Commons.Binsor
 
 		private static IConfiguration ObtainSubscribers(IConfiguration config)
 		{
-			IConfiguration subscribers = config.Children["subscribers"];
+			var subscribers = config.Children["subscribers"];
 
 			if (subscribers == null)
 			{

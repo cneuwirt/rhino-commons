@@ -51,49 +51,6 @@ namespace Rhino.Commons.Binsor
 	{
 		private static readonly BooToken tokenThatIsNeededToKeepReferenceToTheBooParserAssembly = new BooToken();
 
-		internal static ICollection<INeedSecondPassRegistration> NeedSecondPassRegistrations
-		{
-			get
-			{
-				ICollection<INeedSecondPassRegistration> data = (ICollection<INeedSecondPassRegistration>)
-				                                                Local.Data[tokenThatIsNeededToKeepReferenceToTheBooParserAssembly];
-				if (data == null)
-				{
-					Local.Data[tokenThatIsNeededToKeepReferenceToTheBooParserAssembly] =
-						data = new List<INeedSecondPassRegistration>();
-				}
-				return data;
-			}
-			set { Local.Data[tokenThatIsNeededToKeepReferenceToTheBooParserAssembly] = value; }
-		}
-
-		public static bool TryGetComponentByName(string name, out Component component)
-		{
-			component = null;
-			foreach (INeedSecondPassRegistration secondPassRegistration in NeedSecondPassRegistrations)
-			{
-				Component c = secondPassRegistration as Component;
-				if (c == null)
-					continue;
-				if (c.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
-				{
-					component = c;
-					return true;
-				}
-			}
-			return false;
-			
-		}
-
-		public static Component GetComponentByName(string name)
-		{
-			Component component;
-
-			if (!TryGetComponentByName(name, out component))
-				throw new InvalidOperationException("Could not find component named: " + name);
-			return component;
-		}
-
 		public static AbstractConfigurationRunner Read(IWindsorContainer container, CustomUri uri, string name, params string[] namespaces)
         {
             return Read(container, uri, name, name, namespaces);
@@ -113,17 +70,9 @@ namespace Rhino.Commons.Binsor
 			IWindsorContainer container, string fileName, string environment,
 			GenerationOptions generationOptions, params string[] namespaces)
 		{
-			try
-			{
-				AbstractConfigurationRunner conf = GetConfigurationInstanceFromFile(
-					fileName, environment, container, generationOptions, namespaces);
-				Execute(container, conf);
-				return conf;
-			}
-			finally
-			{
-				NeedSecondPassRegistrations = null;
-			}
+			var conf = GetConfigurationInstanceFromFile(fileName, environment, container, generationOptions, namespaces);
+			Execute(container, conf);
+			return conf;
 		}
 
 		public static AbstractConfigurationRunner Read(
@@ -131,54 +80,27 @@ namespace Rhino.Commons.Binsor
             GenerationOptions generationOptions, string name,
             string environment, params string[] namespaces)
         {
-            try
+            using (AbstractConfigurationRunner.UseLocalContainer(container))
             {
-                using (AbstractConfigurationRunner.UseLocalContainer(container))
-                {
-                    AbstractConfigurationRunner conf = GetConfigurationInstanceFromResource(
-                        name, environment, container, uri, generationOptions, namespaces);
-
-					using (AbstractConfigurationRunner.CaptureRegistrations())
-					{
-						conf.Run();
-					}
-
-                	foreach (INeedSecondPassRegistration needSecondPassRegistration in NeedSecondPassRegistrations)
-                    {
-                        needSecondPassRegistration.RegisterSecondPass();
-                    }
-
-					return conf;
-                }
-            }
-            finally
-            {
-                NeedSecondPassRegistrations = null;
+				var conf = GetConfigurationInstanceFromResource(name, environment, container, uri, generationOptions, namespaces);
+				conf.Run();
+				return conf;
             }
         }
 
 		public static void Execute(IWindsorContainer container, AbstractConfigurationRunner abstractConfiguration)
 		{
-			try
-			{
-				using(AbstractConfigurationRunner.UseLocalContainer(container))
-				{
-					using (AbstractConfigurationRunner.CaptureRegistrations())
-					{
-						abstractConfiguration.Run();
-					}
+			Execute(container, () => abstractConfiguration.Run());
+		}
 
-					foreach(INeedSecondPassRegistration needSecondPassRegistration in NeedSecondPassRegistrations)
-					{
-						needSecondPassRegistration.RegisterSecondPass();
-					}
-				}
-			}
-			finally
+		public static void Execute(IWindsorContainer container, Action registrations)
+		{
+			using (AbstractConfigurationRunner.UseLocalContainer(container))
 			{
-				NeedSecondPassRegistrations = null;
+				registrations();
 			}
 		}
+
 
 		public static AbstractConfigurationRunner Read(IWindsorContainer container, Stream stream, string name, params string[] namespaces)
 		{
@@ -204,26 +126,11 @@ namespace Rhino.Commons.Binsor
 			GenerationOptions generationOptions, string name,
 			string environment, params string[] namespaces)
 		{
-			try
+			using (AbstractConfigurationRunner.UseLocalContainer(container))
 			{
-				using (AbstractConfigurationRunner.UseLocalContainer(container))
-				{
-					AbstractConfigurationRunner conf = GetConfigurationInstanceFromStream(
-						name, environment, container, stream, generationOptions, namespaces);
-					using (AbstractConfigurationRunner.CaptureRegistrations())
-					{
-						conf.Run();
-					}
-					foreach (INeedSecondPassRegistration needSecondPassRegistration in NeedSecondPassRegistrations)
-					{
-						needSecondPassRegistration.RegisterSecondPass();
-					}
-					return conf;
-				}
-			}
-			finally
-			{
-				NeedSecondPassRegistrations = null;
+				var conf = GetConfigurationInstanceFromStream(name, environment, container, stream, generationOptions, namespaces);
+				conf.Run();
+				return conf;
 			}
 		}
 
@@ -232,8 +139,8 @@ namespace Rhino.Commons.Binsor
 			GenerationOptions generationOptions, params string[] namespaces)
 		{
 			string baseDirectory = Path.GetDirectoryName(fileName);
-			UrlResolverDelegate urlResolver = CreateWindorUrlResolver(container);
-			using (TextReader reader = urlResolver(fileName, null))
+			var urlResolver = CreateWindorUrlResolver(container);
+			using (var reader = urlResolver(fileName, null))
 			{
 				return GetConfigurationInstance(
 					Path.GetFileNameWithoutExtension(fileName), environment,
@@ -248,11 +155,10 @@ namespace Rhino.Commons.Binsor
             string name, string environment, IWindsorContainer container, CustomUri uri,
 			GenerationOptions generationOptions, params string[] namespaces)
 	    {
-            IResourceSubSystem system =
-                 (IResourceSubSystem)container.Kernel.GetSubSystem(SubSystemConstants.ResourceKey);
-            IResource resource = system.CreateResource(uri);
+			var system = (IResourceSubSystem)container.Kernel.GetSubSystem(SubSystemConstants.ResourceKey);
+			var resource = system.CreateResource(uri);
             string baseDirectory = Path.GetDirectoryName(uri.Path);
-            UrlResolverDelegate urlResolver = CreateWindorUrlResolver(container);
+			var urlResolver = CreateWindorUrlResolver(container);
                 return GetConfigurationInstance(
                     name, environment, new ReaderInput(name, resource.GetStreamReader()),
                     generationOptions, new AutoReferenceFilesCompilerStep(baseDirectory,urlResolver),
@@ -262,8 +168,8 @@ namespace Rhino.Commons.Binsor
 			string name, string environment, IWindsorContainer container, Stream stream,
 			GenerationOptions generationOptions, params string[] namespaces)
 		{
-			UrlResolverDelegate urlResolver = CreateWindorUrlResolver(container);
-			using (StreamReader reader = new StreamReader(stream))
+			var urlResolver = CreateWindorUrlResolver(container);
+			using (var reader = new StreamReader(stream))
 			{
 				return GetConfigurationInstance(
 					name, environment, new ReaderInput(name, reader),
@@ -277,12 +183,12 @@ namespace Rhino.Commons.Binsor
 			GenerationOptions generationOptions, ICompilerStep autoReferenceStep,
 			params string[] namespaces)
 		{
-			BooCompiler compiler = new BooCompiler();
+			var compiler = new BooCompiler();
 			compiler.Parameters.Ducky = true;
-			if (generationOptions == GenerationOptions.Memory)
-				compiler.Parameters.Pipeline = new CompileToMemory();
-			else
-				compiler.Parameters.Pipeline = new CompileToFile();
+			compiler.Parameters.Pipeline =
+				generationOptions == GenerationOptions.Memory ?
+				new CompileToMemory() : 
+				new CompileToFile();
 
 			compiler.Parameters.Pipeline.Insert(1, autoReferenceStep);
 			compiler.Parameters.Pipeline.Insert(2, new BinsorCompilerStep(environment, namespaces));
@@ -290,7 +196,7 @@ namespace Rhino.Commons.Binsor
 				typeof (ProcessMethodBodiesWithDuckTyping),
 				new TransformUnknownReferences());
 			compiler.Parameters.Pipeline.InsertAfter(typeof (TransformUnknownReferences),
-			                                         new RegisterComponentAndFacilitiesAfterCreation());
+			                                         new RegisterAfterCreation());
 
 			compiler.Parameters.OutputType = CompilerOutputType.Library;
 			compiler.Parameters.Input.Add(input);
@@ -299,12 +205,12 @@ namespace Rhino.Commons.Binsor
 
 			TryAddAssembliesReferences(compiler.Parameters, "Rhino.Commons.NHibernate", "Rhino.Commons.ActiveRecord");
 
-			CompilerContext run = compiler.Run();
+			var run = compiler.Run();
 			if (run.Errors.Count != 0)
 			{
 				throw new CompilerError(string.Format("Could not compile configuration! {0}", run.Errors.ToString(true)));
 			}
-			Type type = run.GeneratedAssembly.GetType(name.Replace('.', '_'));
+			var type = run.GeneratedAssembly.GetType(name.Replace('.', '_'));
 			return Activator.CreateInstance(type) as AbstractConfigurationRunner;
 		}
 
@@ -331,28 +237,21 @@ namespace Rhino.Commons.Binsor
 
 		private static UrlResolverDelegate CreateWindorUrlResolver(IWindsorContainer container)
 		{
-			IResourceSubSystem subSystem = (IResourceSubSystem)
-			                               container.Kernel.GetSubSystem(SubSystemConstants.ResourceKey);
+			var subSystem = (IResourceSubSystem) container.Kernel.GetSubSystem(SubSystemConstants.ResourceKey);
 
-			return delegate(string url, string basePath)
+			return (url, basePath) =>
 			{
-				IResource resource;
-
 				if (url.IndexOf(':') < 0)
 				{
 					url = "file://" + url;
 				}
 
-				if (!string.IsNullOrEmpty(basePath))
-				{
-					resource = subSystem.CreateResource(url, basePath);
-				}
-				else
-				{
-					resource = subSystem.CreateResource(url);
-				}
+				var resource = string.IsNullOrEmpty(basePath)
+					? subSystem.CreateResource(url) 
+					: subSystem.CreateResource(url, basePath);
+
 				using (resource)
-				using (TextReader reader = resource.GetStreamReader())
+				using (var reader = resource.GetStreamReader())
 					return new StringReader(reader.ReadToEnd());
 			};
 		}

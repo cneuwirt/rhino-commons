@@ -26,7 +26,6 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
-
 using System;
 using System.Collections;
 using Castle.Core.Configuration;
@@ -46,9 +45,9 @@ namespace Rhino.Commons.Binsor.Configuration
 		{
 			string value = null;
 
-			if (dictionary != null && !string.IsNullOrEmpty(valueKey))
+			if (dictionary != null && string.IsNullOrEmpty(valueKey) == false)
 			{
-				object valueItem = dictionary[valueKey];
+				var valueItem = dictionary[valueKey];
 				if (valueItem != null)
 				{
 					value = valueItem.ToString();
@@ -56,7 +55,7 @@ namespace Rhino.Commons.Binsor.Configuration
 				}
 			}
 
-			if (!string.IsNullOrEmpty(name))
+			if (string.IsNullOrEmpty(name) == false)
 			{
 				parent = CreateChild(parent, name, value);
 			}
@@ -65,7 +64,7 @@ namespace Rhino.Commons.Binsor.Configuration
 			{
 				foreach(DictionaryEntry entry in dictionary)
 				{
-					IConfigurationBuilder builder = entry.Key as IConfigurationBuilder;
+					var builder = entry.Key as IConfigurationBuilder;
 					if (builder != null)
 					{
 						builder.Build(parent, entry.Value);	

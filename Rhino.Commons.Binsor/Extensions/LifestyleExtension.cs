@@ -26,7 +26,6 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
-
 using System;
 using Castle.Core;
 using Castle.MicroKernel.Registration;
@@ -44,9 +43,15 @@ namespace Rhino.Commons.Binsor
 			this.lifestyle = lifestyle;
 		}
 
-		public virtual void Apply(Component component, ComponentRegistration registration)
+		public virtual void Apply<T>(Component component, ComponentRegistration<T> registration)
+			where T : class
 		{
 			registration.LifeStyle.Is(lifestyle);
+		}
+
+		void IComponentExtension.Apply(Component component, ComponentRegistration registration)
+		{
+			Apply(component, registration);
 		}
 	}
 
@@ -106,7 +111,7 @@ namespace Rhino.Commons.Binsor
 			set { maxPoolSize = value; }
 		}
 
-		public override void Apply(Component component, ComponentRegistration registration)
+		public override void Apply<T>(Component component, ComponentRegistration<T> registration)
 		{
 			registration.LifeStyle.PooledWithSize(initialPoolSize.GetValueOrDefault(), maxPoolSize.GetValueOrDefault());
 		}
@@ -125,20 +130,44 @@ namespace Rhino.Commons.Binsor
 
 	#endregion
 
+	#region Scoped Lifestyle
+
+	public class Scoped : LifestyleExtension
+	{
+		public Scoped() : base(LifestyleType.Scoped)
+		{
+		}
+
+		public Scoped(Type scopeAccessor) : this()
+		{
+			ScopeAccessor = scopeAccessor;
+		}
+
+		public Type ScopeAccessor { get; private set; }
+
+		
+		public override void Apply<T>(Component component, ComponentRegistration<T> registration)
+		{
+			registration.LifeStyle.Scoped(ScopeAccessor);
+		}
+	}
+
+	#endregion
+
 	#region Custom Lifestyle
 
 	public class Custom : LifestyleExtension
 	{
-		private readonly Type customLifestyleType;
-
 		public Custom(Type customLifestyleType) : base(LifestyleType.Custom)
 		{
-			this.customLifestyleType = customLifestyleType;
+			CustomLifestyleType = customLifestyleType;
 		}
 
-		public override void Apply(Component component, ComponentRegistration registration)
+		public Type CustomLifestyleType { get; private set; }
+
+		public override void Apply<T>(Component component, ComponentRegistration<T> registration)
 		{
-			registration.LifeStyle.Custom(customLifestyleType);
+			registration.LifeStyle.Custom(CustomLifestyleType);
 		}
 	}
 

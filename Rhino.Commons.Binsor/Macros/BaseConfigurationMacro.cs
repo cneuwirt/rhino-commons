@@ -26,7 +26,6 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
-
 using System;
 using Boo.Lang.Compiler.Ast;
 
@@ -37,8 +36,7 @@ namespace Rhino.Commons.Binsor.Macros
     [CLSCompliant(false)]
 	public class BaseConfigurationMacro<T> : BaseBinsorExtensionMacro<T> where T : ConfigurationExtension
 	{
-		public BaseConfigurationMacro(string name, params string[] validParents)
-			: base(name, false, validParents)
+		public BaseConfigurationMacro(string name) : base(name, false)
 		{	
 		}
 
@@ -50,7 +48,7 @@ namespace Rhino.Commons.Binsor.Macros
 			{
 				PromoteExtensions(macro, parent);
 
-				HashConfigurationBuilder builder = new HashConfigurationBuilder();
+				var builder = new HashConfigurationBuilder();
 
 				if (builder.BuildConfig(macro.Body, Errors) && builder.HasConfiguration)
 				{

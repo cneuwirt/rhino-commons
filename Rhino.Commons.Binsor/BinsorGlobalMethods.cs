@@ -16,7 +16,7 @@ namespace Rhino.Commons.Binsor
         public static Type GetFirstInterface(Type type)
 #endif
 		{
-			return GetFirstInterface(type, delegate { return true; });
+			return GetFirstInterface(type, _ => true);
 		}
 
 		[Boo.Lang.Extension]
@@ -31,8 +31,8 @@ namespace Rhino.Commons.Binsor
 			if(interfaces.Length!=1)
             {
                 throw new InvalidOperationException(
-                    "Could not find service interface for "+ type +" because it implements "+interfaces.Length +" interfaces matching the given predicate."+ Environment.NewLine + 
-                    "GetFirstInterface() will only work on types implementing a single interface.");
+					String.Format("Could not find service interface for {0} because it implements {1} interfaces matching the given predicate.{2}GetFirstInterface() will only work on types implementing a single interface.",
+					type, interfaces.Length, Environment.NewLine));
             }
             return interfaces[0];
         }
@@ -46,10 +46,7 @@ namespace Rhino.Commons.Binsor
 		/// <returns></returns>
         public static TypeEnumerable AllTypesBased<T>(params string[] assemblyNames)
 		{
-            return new TypeEnumerable(AllTypesInternal(assemblyNames, delegate(Type type)
-            {
-                return typeof(T).IsAssignableFrom(type);
-            }));
+            return new TypeEnumerable(AllTypesInternal(assemblyNames, type => typeof(T).IsAssignableFrom(type)));
 		}
 
         /// <summary>
@@ -59,17 +56,14 @@ namespace Rhino.Commons.Binsor
         /// <returns></returns>
         public static TypeEnumerable AllTypes(params string[] assemblyNames)
         {
-            return new TypeEnumerable(AllTypesInternal(assemblyNames, delegate
-            {
-                return true;
-            }));
+            return new TypeEnumerable(AllTypesInternal(assemblyNames, _ => true));
         }
 
 		private static IEnumerable<Type> AllTypesInternal(string[] assemblyNames, Predicate<Type> match)
 		{
-			foreach (Assembly assembly in AllAssemblies(assemblyNames))
+			foreach (var assembly in AllAssemblies(assemblyNames))
 			{
-				foreach (Type type in assembly.GetTypes())
+				foreach (var type in assembly.GetTypes())
 				{
 					if (type.IsClass == false || type.IsAbstract)
 						continue;
@@ -82,10 +76,7 @@ namespace Rhino.Commons.Binsor
 
         public static TypeEnumerable AllTypesWithAttribute<T>(params string[] assemblyNames)
 		{
-            return new TypeEnumerable(AllTypesInternal(assemblyNames, delegate(Type type)
-            {
-                return type.IsDefined(typeof(T), true);
-            }));
+            return new TypeEnumerable(AllTypesInternal(assemblyNames, type => type.IsDefined(typeof(T), true)));
 		}
 
 		/// <summary>
@@ -95,8 +86,8 @@ namespace Rhino.Commons.Binsor
 		/// <param name="assemblyNames">The assembly names.</param>
         public static IEnumerable<Assembly> AllAssemblies(params string[] assemblyNames)
 		{
-			List<Assembly> assemblies = new List<Assembly>();
-			foreach (string assembly in assemblyNames)
+			var assemblies = new List<Assembly>();
+			foreach (var assembly in assemblyNames)
 			{
 				try
 				{

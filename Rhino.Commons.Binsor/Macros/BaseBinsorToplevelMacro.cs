@@ -26,7 +26,6 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
-
 namespace Rhino.Commons.Binsor.Macros
 {
 	using System;
@@ -62,7 +61,7 @@ namespace Rhino.Commons.Binsor.Macros
 
 		private bool ProcessAttributes(MacroStatement macro)
 		{
-			HashConfigurationBuilder builder = new HashConfigurationBuilder();
+			var builder = new HashConfigurationBuilder();
 			if (!builder.BuildAttributes(macro.Body, Errors))
 			{
 				return false;
@@ -70,7 +69,7 @@ namespace Rhino.Commons.Binsor.Macros
 
 			if (builder.HasConfiguration)
 			{
-				MethodInvocationExpression extension = new MethodInvocationExpression(
+				var extension = new MethodInvocationExpression(
 					AstUtil.CreateReferenceExpression(typeof(ConfigurationExtension).FullName)
 					);
 				extension.Arguments.Add(builder.HashConfiguration);
@@ -81,29 +80,20 @@ namespace Rhino.Commons.Binsor.Macros
 
 		protected virtual bool ProcessStatements(MacroStatement macro)
 		{
-			return ProcessStatements(macro,
-									 delegate(Statement statement)
-									 {
-										 return ProcessProperties(statement);
-									 });
+			return ProcessStatements(macro, statement => ProcessProperties(statement));
 		}
 
 		protected virtual bool ProcessProperties(Statement statement)
 		{
-			ExpressionStatement expression = statement as ExpressionStatement;
-			if (expression != null)
-			{
-				return PropertiesToExpressionPairs(expression.Expression, create.NamedArguments);				
-			}
-			return true;
+			var expression = statement as ExpressionStatement;
+			return expression != null
+				? PropertiesToExpressionPairs(expression.Expression, create.NamedArguments)
+				: true;
 		}
 
 		private bool ProcessExtensions(MacroStatement macro)
 		{
-			return ApplyExtensions(macro, delegate(Expression extension)
-			                              {
-			                              	 create.Arguments.Add(extension);
-			                              });
+			return ApplyExtensions(macro, extension => create.Arguments.Add(extension));
 		}
 	}
 }

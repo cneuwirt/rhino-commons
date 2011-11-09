@@ -28,16 +28,26 @@
 
 #endregion
 
-
+using Castle.Core;
+using Castle.MicroKernel;
+using Castle.MicroKernel.ModelBuilder;
 using Castle.MicroKernel.Registration;
 
 namespace Rhino.Commons.Binsor
 {
-	public abstract class AbstractComponentExtension : ComponentDescriptor<object>, IComponentExtension
+	public abstract class AbstractComponentExtension : IComponentModelDescriptor, IComponentExtension
 	{
 		public virtual void Apply(Component component, ComponentRegistration registration)
 		{
 			registration.AddDescriptor(this);
+		}
+
+		public virtual void BuildComponentModel(IKernel kernel, ComponentModel model)
+		{
+		}
+
+		public virtual void ConfigureComponentModel(IKernel kernel, ComponentModel model)
+		{
 		}
 	}
 }

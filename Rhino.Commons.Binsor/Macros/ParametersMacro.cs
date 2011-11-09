@@ -26,7 +26,6 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
-
 using System;
 
 namespace Rhino.Commons.Binsor.Macros
@@ -36,8 +35,7 @@ namespace Rhino.Commons.Binsor.Macros
     [CLSCompliant(false)]
 	public class ParametersMacro : BaseConfigurationMacro<ParametersExtension>
 	{
-		public ParametersMacro()
-			: base("parameters", "component", "configuration", "extend")
+		public ParametersMacro() : base("parameters")
 		{
 		}
 	}

@@ -44,7 +44,8 @@ namespace Rhino.Commons.Binsor
 			"Rhino.Commons.Binsor.BinsorGlobalMethods",
 			"Rhino.Commons.Binsor.Macros",
 			"Rhino.Commons.Binsor.Configuration",
-			"Castle.Core"
+			"Castle.Windsor",
+			"Castle.Core",
 		};
 		
 		public BinsorCompilerStep(params string[] namespaces)
@@ -61,27 +62,19 @@ namespace Rhino.Commons.Binsor
 
 		protected override void ExtendBaseClass(TypeDefinition definition)
 		{
-			Property property = new Property("Environment");
-			property.Getter = new Method("getter_Environment");
-			property.Getter.Body.Add(
-				new ReturnStatement(
-					new StringLiteralExpression(environment ?? "")
-					)
-				);
+			var property = new Property("_Environment") { Getter = new Method("getter__Environment") };
+			property.Getter.Body.Add(new ReturnStatement(new StringLiteralExpression(environment ?? "")));
 			definition.Members.Add(property);
 		}
 
 		private static string[] GetEffectiveNamespaces(string[] namespaces)
 		{
 			if (namespaces == null || namespaces.Length == 0)
-			{
 				return DefaultNamespaces;
-			}
 
-			string[] ns = new string[DefaultNamespaces.Length + namespaces.Length];
+			var ns = new string[DefaultNamespaces.Length + namespaces.Length];
 			DefaultNamespaces.CopyTo(ns, 0);
 			namespaces.CopyTo(ns, DefaultNamespaces.Length);
-
 			return ns;
 		}
 	}

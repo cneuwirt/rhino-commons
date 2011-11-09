@@ -40,7 +40,7 @@ namespace Rhino.Commons.Binsor
 {
 	using Boo.Lang;
 
-	public class Facility : IQuackFu
+	public class Facility : IRegisterable, IQuackFu
 	{
 		private readonly string _key;
         private readonly Type _facility;
@@ -99,26 +99,24 @@ namespace Rhino.Commons.Binsor
 			get { return _parameters; }	
 		}
 
-        public Facility Register()
+        public void Register()
         {
 			if (_extensions != null)
 			{
-				foreach (IFacilityExtension extension in _extensions)
+				foreach (var extension in _extensions)
 				{
 					extension.Apply(this);
 				}
 			}
 
-        	IFacility instance = ObtainFacilityInstance();
+			var instance = ObtainFacilityInstance();
 
 			if (_configuration != null)
 			{
 				kernel.ConfigurationStore.AddFacilityConfiguration(_key, _configuration);
 			}
 
-        	kernel.AddFacility(_key, instance);
-
-            return this;
+        	kernel.AddFacility(instance);
         }
 
         public object QuackGet(string name, object[] property_parameters)
@@ -143,23 +141,23 @@ namespace Rhino.Commons.Binsor
 				return _facilityInstance;
 			}
 
-			System.Collections.Generic.List<object> parameters = new System.Collections.Generic.List<object>();
-			ConstructorInfo constructor = SelectEligbleConstructor(parameters);
+			var parameters = new System.Collections.Generic.List<object>();
+			var constructor = SelectEligbleConstructor(parameters);
 			return (IFacility) constructor.Invoke(parameters.ToArray());
 		}
 
 		private ConstructorInfo SelectEligbleConstructor(ICollection<object> arguments)
 		{
-			ConstructorInfo[] constructors = _facility.GetConstructors();
+			var constructors = _facility.GetConstructors();
 
-			foreach (ConstructorInfo constuctorInfo in constructors)
+			foreach (var constuctorInfo in constructors)
 			{
-				ParameterInfo[] parameters = constuctorInfo.GetParameters();
+				var parameters = constuctorInfo.GetParameters();
 				if (parameters.Length != _parameters.Count) continue;
 
 				arguments.Clear();
 
-				foreach (ParameterInfo parameterInfo in parameters)
+				foreach (var parameterInfo in parameters)
 				{
 					if (_parameters.Contains(parameterInfo.Name))
 					{

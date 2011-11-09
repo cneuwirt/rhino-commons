@@ -2,12 +2,14 @@ namespace Rhino.Commons.Binsor
 {
 	using System;
 	using Castle.Core.Configuration;
+	using Castle.MicroKernel;
 	using Configuration;
+	using ComponentReg = Castle.MicroKernel.Registration.Component;
 
-	public class ComponentReference : IConfigurationFormatter, INeedSecondPassRegistration
+	public class ComponentReference : IConfigurationFormatter
 	{
 		private readonly string _name;
-		private readonly Type _service;
+		private readonly IKernel kernel = AbstractConfigurationRunner.IoC.Container.Kernel;
 
 		public ComponentReference(string name)
 		{
@@ -17,8 +19,11 @@ namespace Rhino.Commons.Binsor
 		public ComponentReference(Type service)
 		{
 			_name = service.FullName;
-			_service = service;
-			BooReader.NeedSecondPassRegistrations.Add(this);
+
+			if (kernel.HasComponent(_name) == false)
+			{
+				kernel.Register(ComponentReg.For(service).Named(_name));
+			}
 		}
 
 		public ComponentReference(Component component)
@@ -39,16 +44,8 @@ namespace Rhino.Commons.Binsor
 			}
 			else
 			{
-				string reference = "${" + _name + "}";
+				string reference = String.Format("${{{0}}}", _name);
 				ConfigurationHelper.CreateChild(parent, name, reference);
-			}
-		}
-
-		public void RegisterSecondPass()
-		{
-			if (!AbstractConfigurationRunner.IoC.Container.Kernel.HasComponent(_name))
-			{
-				AbstractConfigurationRunner.IoC.Container.AddComponent(_name, _service);
 			}
 		}
 	}

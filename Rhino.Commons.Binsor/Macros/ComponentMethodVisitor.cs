@@ -33,7 +33,6 @@ using Boo.Lang.Compiler.Ast;
 
 namespace Rhino.Commons.Binsor.Macros
 {
-
 	[CLSCompliant(false)]
 	public class ComponentMethodVisitor : DepthFirstVisitor
 	{
@@ -60,7 +59,7 @@ namespace Rhino.Commons.Binsor.Macros
 
 		public override void OnMemberReferenceExpression(MemberReferenceExpression node)
 		{
-			ReferenceExpression reference = node.Target as ReferenceExpression;
+			var reference = node.Target as ReferenceExpression;
 
 			if (reference != null && reference.Name.StartsWith("@"))
 			{

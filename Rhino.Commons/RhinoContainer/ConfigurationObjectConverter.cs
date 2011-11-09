@@ -30,11 +30,9 @@
 namespace Rhino.Commons
 {
 	using System;
-	using System.Text;
-	using Castle.Core.Configuration;
 	using System.Reflection;
-
-    using Castle.MicroKernel.SubSystems.Conversion;
+	using Castle.Core.Configuration;
+	using Castle.MicroKernel.SubSystems.Conversion;
 
 	/// <summary>
 	/// Perform the conversion by mapping the configuration values

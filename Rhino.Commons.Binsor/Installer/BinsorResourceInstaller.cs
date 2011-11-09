@@ -28,11 +28,12 @@
 
 #endregion
 
-using Castle.Windsor;
+using System;
 using Castle.Core.Resource;
 using Castle.MicroKernel;
-using Castle.MicroKernel.SubSystems;
 using Castle.MicroKernel.SubSystems.Resource;
+using Castle.Windsor;
+
 namespace Rhino.Commons.Binsor
 {
     public class BinsorResourceInstaller: BinsorScriptInstaller<BinsorResourceInstaller>
@@ -46,15 +47,15 @@ namespace Rhino.Commons.Binsor
 
 		protected override AbstractConfigurationRunner InstallInto(IWindsorContainer container)
         {
-            IResourceSubSystem system = (IResourceSubSystem) container.Kernel.GetSubSystem(SubSystemConstants.ResourceKey);
-            IResource resource = system.CreateResource(uri);
-            CustomUri Uri = new CustomUri(uri);
+            var system = (IResourceSubSystem) container.Kernel.GetSubSystem(SubSystemConstants.ResourceKey);
+            var resource = system.CreateResource(uri);
+            var Uri = new CustomUri(uri);
             return BooReader.Read(container, Uri, GenerationOptions, GetName(), EnvironmentName);   
         }
 
-        protected string GetName()
-        {
-            return "Binsor" + System.Guid.NewGuid();
-        }
+		protected string GetName()
+		{
+			return "Binsor" + Guid.NewGuid();
+		}
     }
 }

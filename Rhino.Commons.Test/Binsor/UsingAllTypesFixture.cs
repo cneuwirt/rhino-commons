@@ -3,6 +3,7 @@ using Castle.MicroKernel;
 namespace Rhino.Commons.Test.Binsor
 {
     using System;
+	using System.Linq;
     using MbUnit.Framework;
 
     [TestFixture]
@@ -36,7 +37,7 @@ namespace Rhino.Commons.Test.Binsor
             RhinoContainer container = new RhinoContainer(@"Binsor\UsingAllTypes.boo");
             IHandler handler = container.Kernel.GetHandler("nh.repos");
             Assert.IsNotNull(handler);
-            Assert.AreEqual(typeof(IRepository<>), handler.ComponentModel.Service.GetGenericTypeDefinition());
+            Assert.AreEqual(typeof(IRepository<>), handler.ComponentModel.Services.First().GetGenericTypeDefinition());
             Assert.AreEqual(typeof(NHRepository<>), handler.ComponentModel.Implementation);
         }
 
@@ -46,7 +47,7 @@ namespace Rhino.Commons.Test.Binsor
 			RhinoContainer container = new RhinoContainer(@"Binsor\UsingAllTypes.boo");
 			IHandler handler = container.Kernel.GetHandler("foo54");
 			Assert.IsNotNull(handler);
-			Assert.AreEqual(typeof(IFoo54), handler.ComponentModel.Service);
+			Assert.AreEqual(typeof(IFoo54), handler.ComponentModel.Services.First());
 			Assert.AreEqual(typeof(Fubar54), handler.ComponentModel.Implementation);
 		}
     }

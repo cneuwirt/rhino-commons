@@ -62,7 +62,7 @@ namespace Rhino.Commons.Test.Binsor
 				ActiveRecordFacility ar = facility as ActiveRecordFacility;
 				if (ar != null)
 				{
-					IConfiguration config = ar.FacilityConfig;
+					var config = _container.Kernel.ConfigurationStore.GetFacilityConfiguration(typeof(ActiveRecordFacility).FullName);
 					Assert.IsNotNull(config);
 					AssertAttribute(config, "isWeb", "true");
 					AssertAttribute(config, "isDebug", "true");
@@ -179,13 +179,13 @@ namespace Rhino.Commons.Test.Binsor
 		[Test]
 		public void CanUseLoops()
 		{
-			Fubar foo1 = (Fubar)_container.Resolve("foo_1");
+			Fubar foo1 = (Fubar)_container.Resolve("foo_1", new Arguments());
 			Assert.IsNotNull(foo1);
 			Assert.AreEqual(1, foo1.Foo);
-			Fubar foo2 = (Fubar)_container.Resolve("foo_2");
+			Fubar foo2 = (Fubar)_container.Resolve("foo_2", new Arguments());
 			Assert.IsNotNull(foo2);
 			Assert.AreEqual(2, foo2.Foo);
-			Fubar foo3 = (Fubar)_container.Resolve("foo_3");
+			Fubar foo3 = (Fubar)_container.Resolve("foo_3", new Arguments());
 			Assert.IsNotNull(foo3);
 			Assert.AreEqual(3, foo3.Foo);
 		}
@@ -294,7 +294,7 @@ namespace Rhino.Commons.Test.Binsor
 		[Test]
 		public void CanDefineConfigurationsForFactorySupportFacilityWithAccessor()
 		{
-			Fubar foo = (Fubar)_container.Resolve("foo_instance");
+			Fubar foo = (Fubar)_container.Resolve("foo_instance", new Arguments());
 			Assert.IsNotNull(foo);
 			Assert.AreEqual("Instance", foo.Foo);
 		}
@@ -311,6 +311,13 @@ namespace Rhino.Commons.Test.Binsor
 
 			sender.Send("Events are alive!");
 			Assert.AreEqual("Events are alive!", listener.Message);
+		}
+
+		[Test]
+		public void CanDefineConfigurationsForFactorySupportFacilityWithFactoryMethod()
+		{
+			ISender sender = _container.Resolve<ISender>("using_factory_method");
+			CollectionAssert.AreEqual(sender.Hosts, new[] { "dolphin", "gorilla", "rhino" });
 		}
 
 		[Test]
@@ -349,6 +356,14 @@ namespace Rhino.Commons.Test.Binsor
 			Assert.AreEqual(2, component.SomeMapping.Count);
 			Assert.AreEqual("value1", component.SomeMapping["key1"]);
 			Assert.AreEqual("value2", component.SomeMapping["key2"]);
+		}
+
+		[Test]
+		public void CanApplyBehaviorsOnComponentCreate()
+		{
+			ISender sender = _container.Resolve<ISender>("for_creating");
+			Assert.AreEqual(5, sender.Backups.Length);
+			CollectionAssert.AreEqual(sender.Hosts, new[] { "dolphin", "gorilla", "rhino" });
 		}
 	}
 }

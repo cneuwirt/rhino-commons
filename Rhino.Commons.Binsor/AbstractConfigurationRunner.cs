@@ -27,7 +27,6 @@
 #endregion
 
 using System;
-using Castle.Core;
 using Castle.MicroKernel;
 using Castle.Windsor;
 
@@ -50,34 +49,38 @@ namespace Rhino.Commons.Binsor
 
         public static IDisposable UseLocalContainer(IWindsorContainer container)
         {
-            localContainer = container;
-            return new DisposableAction(delegate { localContainer = null; });
+			return new ContainerScope(container);
         }
 
-		public static IDisposable CaptureRegistrations()
+		protected void Run(IWindsorContainer container, Action registrations)
 		{
-			localContainer.Kernel.ComponentRegistered +=new ComponentDataDelegate(AddSecondPassRegistration);
-
-			// we should get components already registered.
-			foreach ( GraphNode node in localContainer.Kernel.GraphNodes)
+			if (localContainer == null)
 			{
-				ComponentModel model = node as ComponentModel;
-				if (model == null)
-					continue;
-				AddSecondPassRegistration(model.Name, localContainer.Kernel.GetHandler(model.Name));
+				BooReader.Execute(container, registrations);
 			}
-			return new DisposableAction(delegate {
-			                                     	localContainer.Kernel.ComponentRegistered -=
-			                                     		new ComponentDataDelegate(AddSecondPassRegistration); });
-		}
-
-		static void AddSecondPassRegistration(string key, IHandler handler)
-		{
-			Component component;
-			if (false == BooReader.TryGetComponentByName(key, out component))
-				BooReader.NeedSecondPassRegistrations.Add(new Component(key, handler.Service, handler.ComponentModel.Implementation));
+			else
+			{
+				registrations();
+			}
 		}
 
 		public abstract void Run();
+
+		#region Nested Class: ContainerScope
+
+		class ContainerScope : IDisposable
+		{
+			public ContainerScope(IWindsorContainer container)
+			{
+				localContainer = container;
+			}
+
+			public void Dispose()
+			{
+				localContainer = null;
+			}
+		}
+
+		#endregion
 	}
 }

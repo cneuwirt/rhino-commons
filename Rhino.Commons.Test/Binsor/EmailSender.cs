@@ -33,6 +33,8 @@ namespace Rhino.Commons.Test.Binsor
 {
 	public interface ISender
 	{
+		string[] Hosts { get; set; }
+
 		ISender[] Backups { get; set; }
 
 		void Send(string msg);
