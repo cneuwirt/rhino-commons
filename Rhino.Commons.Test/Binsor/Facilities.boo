@@ -28,7 +28,7 @@
 
 
 import Rhino.Commons.Test.Components from Rhino.Commons.Test
-import Castle.Facilities.FactorySupport from Castle.MicroKernel
+import Castle.Facilities.FactorySupport from Castle.Windsor
 import Castle.Facilities.Logging
 import System.Reflection
 

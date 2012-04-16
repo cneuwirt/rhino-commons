@@ -24,9 +24,15 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+<<<<<<< HEAD
 #endregion
 
 using Castle.Facilities.Startable;
+=======
+#endregion
+
+using Castle.Facilities.Startable;
+>>>>>>> UpdateCastle
 using Castle.MicroKernel.Registration;
 
 namespace Rhino.Commons.Binsor
@@ -48,12 +54,16 @@ namespace Rhino.Commons.Binsor
 
 		void IComponentExtension.Apply(Component component, ComponentRegistration registration)
 		{
+<<<<<<< HEAD
 			if (!string.IsNullOrEmpty(startMethod))
+=======
+			if (string.IsNullOrEmpty(startMethod) == false)
+>>>>>>> UpdateCastle
 			{
 				registration.StartUsingMethod(startMethod);
 			}
 
-			if (!string.IsNullOrEmpty(stopMethod))
+			if (string.IsNullOrEmpty(stopMethod) == false)
 			{
 				registration.StopUsingMethod(stopMethod);
 			}

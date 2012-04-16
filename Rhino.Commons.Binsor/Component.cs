@@ -30,6 +30,7 @@
 namespace Rhino.Commons.Binsor
 {
 	using System;
+	using System.Linq;
 	using System.Collections;
 	using System.Collections.Generic;
 	using Boo.Lang;
@@ -39,7 +40,7 @@ namespace Rhino.Commons.Binsor
 	using Castle.MicroKernel.Registration;
 	using Rhino.Commons.Binsor.Configuration;
 
-	public class Component : IQuackFu, INeedSecondPassRegistration, IConfigurationFormatter
+	public class Component : IRegisterable, IQuackFu, IConfigurationFormatter
 	{
 		private readonly string _name;
 		private readonly IEnumerable<Type> _services;
@@ -54,48 +55,41 @@ namespace Rhino.Commons.Binsor
 
         //important, we need to get this when we create the component, because we need
         //to support nested components
-	    internal readonly IKernel kernel = AbstractConfigurationRunner.IoC.Container.Kernel;
+	    private readonly IKernel kernel = AbstractConfigurationRunner.IoC.Container.Kernel;
 
 		#region Constructors 
 
-		public Component(Type service,
-						 params IComponentExtension[] extensions)
+		public Component(Type service, params IComponentExtension[] extensions)
 			: this(service, service, extensions)
 		{
 		}
 
-		public Component(Type service, Type impl,
-					     params IComponentExtension[] extensions)
+		public Component(Type service, Type impl, params IComponentExtension[] extensions)
 			: this(impl.FullName, service, impl, extensions)
 		{
 		}
 
-		public Component(IEnumerable<Type> services, Type impl,
-						 params IComponentExtension[] extensions)
+		public Component(IEnumerable<Type> services, Type impl, params IComponentExtension[] extensions)
 			: this(impl.FullName, services, impl, extensions)
 		{
 		}
 
-		public Component(string name, Type service,
-						 params IComponentExtension[] extensions)
+		public Component(string name, Type service, params IComponentExtension[] extensions)
 			: this(name, service, service, extensions)
 		{
 		}
 
-		public Component(string name, Type service, Type impl,
-						 params IComponentExtension[] extensions)
+		public Component(string name, Type service, Type impl, params IComponentExtension[] extensions)
 			: this(name, new Type[] { service }, impl, extensions )
 		{
 		}
 
-		public Component(string name, IEnumerable<Type> services, Type impl,
-		                 params IComponentExtension[] extensions)
+		public Component(string name, IEnumerable<Type> services, Type impl, params IComponentExtension[] extensions)
 		{
 			_name = name;
 			_services = services;
 			_impl = impl;
 			_extensions = extensions;
-		    BooReader.NeedSecondPassRegistrations.Add(this);
 		}
 
 		#endregion
@@ -129,12 +123,12 @@ namespace Rhino.Commons.Binsor
 
 		#endregion
 
-		public string Name
+		protected internal string Name
 		{
 			get { return _name; }
 		}
 
-		public IConfiguration Configuration
+		protected internal IConfiguration Configuration
 		{
 			get
 			{
@@ -143,7 +137,7 @@ namespace Rhino.Commons.Binsor
 			}
 		}
 
-		public IDictionary Dependencies
+		protected internal IDictionary Dependencies
 		{
 			get { return _dependencies; }
 		}
@@ -153,23 +147,12 @@ namespace Rhino.Commons.Binsor
 			get { return _registration; }
 		}
 
-        public Component Register()
+        public void Register()
 		{
-			foreach (Type serviceType in _services)
-			{
-				if (_registration == null)
-				{
-					_registration = new ComponentRegistration(serviceType);
-					_registration.Named(_name).ImplementedBy(_impl)
-						.DependsOn(_dependencies);
+			_registration = new ComponentRegistration(_services.ToArray());
+			_registration.Named(_name).ImplementedBy(_impl).DependsOn(_dependencies);
 
-					RegisterExtensions(_extensions);
-				}
-				else
-				{
-					_registration.Forward(serviceType);
-				}
-			}
+			RegisterExtensions(_extensions);
 
 			if (_lifestyle.HasValue)
 			{
@@ -179,8 +162,6 @@ namespace Rhino.Commons.Binsor
 			kernel.Register(_registration);
 
 			_dependencies.Clear();
-
-        	return this;
 		}
 
 		internal void RegisterExtensions(IEnumerable<IComponentExtension> extensions)
@@ -189,21 +170,16 @@ namespace Rhino.Commons.Binsor
 			{
 				EnsureConfiguration(null);
 
-				foreach (IComponentExtension extension in extensions)
+				foreach (var extension in extensions)
 				{
 					extension.Apply(this, _registration);
 				}
 			}
 		}
 
-		public void RegisterSecondPass()
-        {
-			kernel.RegisterCustomDependencies(_name, _dependencies);
-        }
-
 		public object QuackGet(string name, object[] property_dependencies)
 		{
-			if(property_dependencies!=null && property_dependencies.Length>0)
+			if (property_dependencies!=null && property_dependencies.Length>0)
 			{
 				return _attributes[property_dependencies[0]];
 			}

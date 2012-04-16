@@ -37,7 +37,7 @@ namespace Rhino.Commons.Binsor.Macros
 	[CLSCompliant(false)]
 	public class StartMacro : BaseBinsorExtensionMacro<StartableExtension>
 	{
-		public StartMacro() : base("start", true, "component", "extend")
+		public StartMacro() : base("start", true)
 		{
 		}
 

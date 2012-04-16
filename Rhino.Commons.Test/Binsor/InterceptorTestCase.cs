@@ -27,6 +27,7 @@
 #endregion
 
 using System.IO;
+using System.Linq;
 using Castle.Core;
 using Castle.Windsor;
 using MbUnit.Framework;

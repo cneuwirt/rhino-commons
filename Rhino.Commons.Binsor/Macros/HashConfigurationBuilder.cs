@@ -107,10 +107,10 @@ namespace Rhino.Commons.Binsor.Macros
 
 			if (!block.IsEmpty)
 			{
-				for(int i = 0; i < block.Statements.Count;)
+				for (int i = 0; i < block.Statements.Count;)
 				{
-					Statement statement = block.Statements[i];
-					ExpressionStatement expression = statement as ExpressionStatement;
+					var statement = block.Statements[i];
+					var expression = statement as ExpressionStatement;
 
 					if (expression == null)
 					{
@@ -122,7 +122,7 @@ namespace Rhino.Commons.Binsor.Macros
 					_found = false;
 					Visit(expression.Expression);
 
-					if (!_found)
+					if (_found == false)
 					{
 						_compileErrors.Add(CompilerErrorFactory.CustomError(
 						                   	expression.LexicalInfo, "Unrecgonized configuration syntax"));
@@ -131,7 +131,7 @@ namespace Rhino.Commons.Binsor.Macros
 
 					if (_applied)
 					{
-						if (!_skip)
+						if (_skip == false)
 						{
 							block.Statements.RemoveAt(i);
 						}
@@ -155,7 +155,7 @@ namespace Rhino.Commons.Binsor.Macros
 		private bool BuildConfigurationNode(BinaryExpression node, bool asAttribute,
 		                                    HashLiteralExpression configuration)
 		{
-			ConfigurationNodeVisitor nodeVisitor = new ConfigurationNodeVisitor();
+			var nodeVisitor = new ConfigurationNodeVisitor();
 			if (!nodeVisitor.GetNode(node.Left, asAttribute, _compileErrors)) return false;
 
 			if (nodeVisitor.IsAttribute || asAttribute)
@@ -179,13 +179,13 @@ namespace Rhino.Commons.Binsor.Macros
 			{
 				// @attrib1=value1, attrib2=value2: Multiple attributes
 
-				foreach(Expression attribute in attributes.Items)
+				foreach(var attribute in attributes.Items)
 				{
 					if (attribute == attributes.Items[0])
 					{
 						configuration.Items.Add(new ExpressionPair(node, attribute));
 					}
-					else if (!BuildAttribute(attribute, configuration))
+					else if (BuildAttribute(attribute, configuration) == false)
 					{
 						return false;
 					}
@@ -214,7 +214,7 @@ namespace Rhino.Commons.Binsor.Macros
 			{
 				attributes = new List<Expression>();
 
-				foreach(Expression attribute in attribs.Items)
+				foreach(var attribute in attribs.Items)
 				{
 					if (attribute == attribs.Items[0])
 					{
@@ -233,11 +233,12 @@ namespace Rhino.Commons.Binsor.Macros
 		private bool BuildConfigurationChild(MethodInvocationExpression child)
 		{
 			Block configBlock;
-			List<Expression> attributes = new List<Expression>();
-			ConfigurationNodeVisitor nodeVisitor = new ConfigurationNodeVisitor();
-			if (!nodeVisitor.GetNode(child, _compileErrors)) return false;
+			var attributes = new List<Expression>();
+			var nodeVisitor = new ConfigurationNodeVisitor();
+			if (nodeVisitor.GetNode(child, _compileErrors) == false) 
+				return false;
 
-			if (!MacroHelper.IsNewBlock(child, out configBlock))
+			if (MacroHelper.IsNewBlock(child, out configBlock) == false)
 			{
 				attributes.AddRange(child.Arguments);
 
@@ -245,14 +246,13 @@ namespace Rhino.Commons.Binsor.Macros
 			}
 			else
 			{
-				if (!configBlock.IsEmpty)
+				if (configBlock.IsEmpty == false)
 				{
-					HashConfigurationBuilder nested = new HashConfigurationBuilder();
+					var nested = new HashConfigurationBuilder();
 					if (nested.BuildConfig(configBlock, _compileErrors) &&
 					    nested.HasConfiguration)
 					{
-						_configuration.Items.Add(new ExpressionPair(nodeVisitor.Node,
-						                                            nested.HashConfiguration));
+						_configuration.Items.Add(new ExpressionPair(nodeVisitor.Node, nested.HashConfiguration));
 						return true;
 					}
 				}
@@ -265,24 +265,22 @@ namespace Rhino.Commons.Binsor.Macros
 			return false;
 		}
 
-		private bool BuildConfigurationChild(Expression child, Expression value,
-		                                     ICollection<Expression> attributes)
+		private bool BuildConfigurationChild(Expression child, Expression value, ICollection<Expression> attributes)
 		{
 			child = EnsureUniqueChild(child);
 
 			if (attributes != null && attributes.Count > 0)
 			{
-				HashLiteralExpression childAttributes = new HashLiteralExpression();
+				var childAttributes = new HashLiteralExpression();
 				if (value != null)
 				{
-					childAttributes.Items.Add(new ExpressionPair(
-					                          	new StringLiteralExpression("value"), value));
+					childAttributes.Items.Add(new ExpressionPair(new StringLiteralExpression("value"), value));
 				}
 
 				// child=value, attrib2=value2: Child with attributes
-				foreach(Expression attribute in attributes)
+				foreach(var attribute in attributes)
 				{
-					if (!BuildAttribute(attribute, childAttributes))
+					if (BuildAttribute(attribute, childAttributes) == false)
 					{
 						return false;
 					}
@@ -293,8 +291,7 @@ namespace Rhino.Commons.Binsor.Macros
 			else
 			{
 				// child=value: Child without attributes
-				_configuration.Items.Add(
-					new ExpressionPair(child, value ?? new StringLiteralExpression("")));
+				_configuration.Items.Add(new ExpressionPair(child, value ?? new StringLiteralExpression("")));
 			}
 
 			return true;
@@ -304,7 +301,7 @@ namespace Rhino.Commons.Binsor.Macros
 		{
 			if (node is StringLiteralExpression)
 			{
-				StringLiteralExpression name = (StringLiteralExpression)node;
+				var name = (StringLiteralExpression)node;
 				if (_childContext.ContainsKey(name.Value))
 				{
 					node = CreateChild(name);
@@ -337,7 +334,7 @@ namespace Rhino.Commons.Binsor.Macros
 
 		private static Expression CreateChild(StringLiteralExpression name)
 		{
-			MethodInvocationExpression child = new MethodInvocationExpression(
+			var child = new MethodInvocationExpression(
 				AstUtil.CreateReferenceExpression(typeof(ChildBuilder).FullName)
 				);
 			child.Arguments.Add(name);

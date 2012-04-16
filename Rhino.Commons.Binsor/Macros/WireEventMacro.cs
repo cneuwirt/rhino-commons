@@ -37,7 +37,7 @@ namespace Rhino.Commons.Binsor.Macros
 	[CLSCompliant(false)]
 	public class WireEventMacro : BaseBinsorExtensionMacro<EventWireExtension>
 	{
-		public WireEventMacro() : base("wireEvent", false, "component", "extend")
+		public WireEventMacro() : base("wireEvent", false)
 		{	
 		}
 
@@ -76,29 +76,29 @@ namespace Rhino.Commons.Binsor.Macros
 
 		private HashLiteralExpression ObtainListeners(MacroStatement macro)
 		{
-			HashLiteralExpression listeners = new HashLiteralExpression();
-			ComponentMethodVisitor componentMethod = new ComponentMethodVisitor();
+			var listeners = new HashLiteralExpression();
+			var componentMethod = new ComponentMethodVisitor();
 
-			foreach (Statement statement in macro.Block.Statements)
+			foreach (var statement in macro.Body.Statements)
 			{
-				ExpressionStatement expression = statement as ExpressionStatement;
+				var expression = statement as ExpressionStatement;
 				if (expression == null || !(expression.Expression is MethodInvocationExpression))
 				{
 					AddSubscriberSyntaxError(statement);
 					return null;
 				}
 
-				MethodInvocationExpression mie = (MethodInvocationExpression) expression.Expression;
-				ReferenceExpression to = mie.Target as ReferenceExpression;
+				var mie = (MethodInvocationExpression) expression.Expression;
+				var to = mie.Target as ReferenceExpression;
 				if (to == null || mie.Arguments.Count != 1 ||
-					!"to".Equals(to.Name, StringComparison.InvariantCultureIgnoreCase))
+					"to".Equals(to.Name, StringComparison.InvariantCultureIgnoreCase) == false)
 				{
 					AddSubscriberSyntaxError(statement);
 					return null;
 				}
 
-				MemberReferenceExpression listener = mie.Arguments[0] as MemberReferenceExpression;
-				if (listener == null || !componentMethod.ExtractMethod(listener))
+				var listener = mie.Arguments[0] as MemberReferenceExpression;
+				if (listener == null || componentMethod.ExtractMethod(listener) == false)
 				{
 					AddSubscriberSyntaxError(statement);
 					return null;					
@@ -113,7 +113,7 @@ namespace Rhino.Commons.Binsor.Macros
 		private void AddSubscriberSyntaxError(Statement statement)
 		{
 			AddCompilerError(statement.LexicalInfo,
-							 "A subscriber statement must be in the form to @listener.Method");			
+				"A subscriber statement must be in the form to @listener.Method");			
 		}
 	}
 }

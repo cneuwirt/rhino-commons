@@ -94,7 +94,7 @@ namespace Rhino.Commons.Binsor.Macros
 
 		public override void OnMethodInvocationExpression(MethodInvocationExpression child)
 		{
-			ReferenceExpression target = (ReferenceExpression) child.Target;
+			var target = (ReferenceExpression) child.Target;
 			_name = NormalizeName(target.Name);
 			_node = CreateBuilderIfNeeded(child, _name);
 		}
@@ -107,7 +107,7 @@ namespace Rhino.Commons.Binsor.Macros
 
 		private static Expression CreateAttribute(string name)
 		{
-			MethodInvocationExpression attribute = new MethodInvocationExpression(
+			var attribute = new MethodInvocationExpression(
 				AstUtil.CreateReferenceExpression(typeof(AttributeBuilder).FullName)
 				);
 			attribute.Arguments.Add(new StringLiteralExpression(name));
@@ -120,7 +120,7 @@ namespace Rhino.Commons.Binsor.Macros
 
 			if (argsCount >= 1)
 			{
-				ReferenceExpression builder = child.Arguments[0] as ReferenceExpression;
+				var builder = child.Arguments[0] as ReferenceExpression;
 				if (builder != null)
 				{
 					Block block;
@@ -132,7 +132,7 @@ namespace Rhino.Commons.Binsor.Macros
 						return null;
 					}
 
-					MethodInvocationExpression builderCtor = new MethodInvocationExpression(builder);
+					var builderCtor = new MethodInvocationExpression(builder);
 					builderCtor.Arguments.Add(new StringLiteralExpression(name));
 					builderCtor.NamedArguments.Extend(child.NamedArguments);
 					return builderCtor;

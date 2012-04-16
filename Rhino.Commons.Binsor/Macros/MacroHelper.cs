@@ -26,7 +26,6 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
-
 using System;
 using Boo.Lang.Compiler.Ast;
 
@@ -68,7 +67,7 @@ namespace Rhino.Commons.Binsor.Macros
 			block = null;
 
 			if (method.Arguments.Count > 0 &&
-					method.Arguments[method.Arguments.Count - 1] is BlockExpression)
+				method.Arguments[method.Arguments.Count - 1] is BlockExpression)
 			{
 				block = ((BlockExpression)method.Arguments[method.Arguments.Count - 1]).Body;
 			}

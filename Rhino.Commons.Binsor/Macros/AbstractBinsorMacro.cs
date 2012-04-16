@@ -41,16 +41,11 @@ namespace Rhino.Commons.Binsor.Macros
 
 		protected Expression GetNameExpression(MacroStatement macro)
 		{
-			ReferenceExpression referenceExpression = macro.Arguments[0] as ReferenceExpression;
-			if (referenceExpression != null &&
-				NameResolutionService.Resolve(referenceExpression.Name) == null)
-			{
-				return CodeBuilder.CreateStringLiteral(referenceExpression.Name);
-			}
-			else
-			{
-				return macro.Arguments[0];
-			}
+			var referenceExpression = macro.Arguments[0] as ReferenceExpression;
+			return referenceExpression != null && 
+				   NameResolutionService.Resolve(referenceExpression.Name) == null 
+				? CodeBuilder.CreateStringLiteral(referenceExpression.Name) 
+				: macro.Arguments[0];
 		}
 
 		protected virtual void ProcessConstructorArguments(MethodInvocationExpression create,
@@ -58,9 +53,9 @@ namespace Rhino.Commons.Binsor.Macros
 		{
 			int argIndex = 0;
 
-			foreach (Expression argument in macro.Arguments)
+			foreach (var argument in macro.Arguments)
 			{
-				foreach (Expression ctorArg in ProcessConstructorArgument(argIndex++, argument))
+				foreach (var ctorArg in ProcessConstructorArgument(argIndex++, argument))
 				{
 					if (ctorArg != null)
 					{
@@ -78,17 +73,13 @@ namespace Rhino.Commons.Binsor.Macros
 		protected bool ArgumentsToCreateNamedArguments(ExpressionCollection arguments,
 		                                               MethodInvocationExpression create)
 		{
-			foreach (Expression argument in arguments)
+			foreach (var argument in arguments)
 			{
 				BinaryExpression parameter;
-				if (!EnsureAssignment(argument, out parameter))
-				{
+				if (EnsureAssignment(argument, out parameter) == false)
 					return false;
-				}
 
-				create.NamedArguments.Add(
-					new ExpressionPair(parameter.Left, parameter.Right)
-					);
+				create.NamedArguments.Add(new ExpressionPair(parameter.Left, parameter.Right));
 			}
 
 			return true;
@@ -98,16 +89,14 @@ namespace Rhino.Commons.Binsor.Macros
 		                                           ExpressionPairCollection pairs)
 		{
 			BinaryExpression assignment;
-			if (!EnsureAssignment(expression, out assignment))
-			{
+			if (EnsureAssignment(expression, out assignment) == false)
 				return false;
-			}
 
 			ArrayLiteralExpression properties;
 
 			if (MacroHelper.IsCompoundAssignment(assignment.Right, out properties))
 			{
-				foreach (Expression item in properties.Items)
+				foreach (var item in properties.Items)
 				{
 					if (item == properties.Items[0])
 					{
@@ -116,10 +105,8 @@ namespace Rhino.Commons.Binsor.Macros
 					else
 					{
 						BinaryExpression property;
-						if (!EnsureAssignment(item, out property))
-						{
+						if (EnsureAssignment(item, out property) == false)
 							return false;
-						}
 
 						pairs.Add(new ExpressionPair(property.Left, property.Right));
 					}
@@ -135,11 +122,12 @@ namespace Rhino.Commons.Binsor.Macros
 
 		protected static bool ProcessStatements(MacroStatement macro, Predicate<Statement> action)
 		{
-			if (!macro.Body.IsEmpty)
+			if (macro.Body.IsEmpty == false)
 			{
-				foreach (Statement statement in macro.Body.Statements)
+				foreach (var statement in macro.Body.Statements)
 				{
-					if (!action(statement)) return false;
+					if (action(statement) == false)
+						return false;
 				}
 			}
 
@@ -153,7 +141,7 @@ namespace Rhino.Commons.Binsor.Macros
 
 		protected static void RegisterExtension(MacroStatement macro, Expression extension)
 		{
-			List<Expression> extenstions = macro[ExtensionsKey] as List<Expression>;
+			var extenstions = macro[ExtensionsKey] as List<Expression>;
 			if (extenstions == null)
 			{
 				extenstions = new List<Expression>();
@@ -166,19 +154,16 @@ namespace Rhino.Commons.Binsor.Macros
 
 		protected static void PromoteExtensions(MacroStatement macro, MacroStatement parent)
 		{
-			ApplyExtensions(macro, delegate(Expression extension)
-						{
-							RegisterExtension(parent, extension);
-						});
+			ApplyExtensions(macro, extension => RegisterExtension(parent, extension));
 		}
 
 		protected static bool ApplyExtensions(MacroStatement macro,
 		                                      Action<Expression> onExtension)
 		{
-			List<Expression> extenstions = macro[ExtensionsKey] as List<Expression>;
+			var extenstions = macro[ExtensionsKey] as List<Expression>;
 			if (extenstions != null && extenstions.Count > 0)
 			{
-				foreach(Expression extenstion in extenstions)
+				foreach(var extenstion in extenstions)
 				{
 					onExtension(extenstion);
 				}
@@ -188,7 +173,7 @@ namespace Rhino.Commons.Binsor.Macros
 
 		protected bool EnsureNoStatements(MacroStatement macro, string name)
 		{
-			if (!macro.Body.IsEmpty)
+			if (macro.Body.IsEmpty == false)
 			{
 				AddCompilerError(macro.LexicalInfo,
 					string.Format("A {0} statement can have no statements", name));
@@ -200,7 +185,7 @@ namespace Rhino.Commons.Binsor.Macros
 		protected bool EnsureAssignment(Expression expression,
 		                                out BinaryExpression assignment)
 		{
-			if (!MacroHelper.IsAssignment(expression, out assignment))
+			if (MacroHelper.IsAssignment(expression, out assignment) == false)
 			{
 				AddCompilerError(expression.LexicalInfo, GetType().Name +
 					" properties must be in the format of name1=value2,name2=value2,...");

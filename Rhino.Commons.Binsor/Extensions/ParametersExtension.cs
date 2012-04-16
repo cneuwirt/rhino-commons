@@ -12,7 +12,7 @@ namespace Rhino.Commons.Binsor.Extensions
 
         protected override IConfiguration GetRootConfiguration(IConfiguration root)
         {
-            IConfiguration parameters = root.Children["parameters"];
+            var parameters = root.Children["parameters"];
 
             if (parameters == null)
             {

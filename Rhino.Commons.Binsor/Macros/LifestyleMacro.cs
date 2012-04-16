@@ -30,23 +30,22 @@
 
 
 using System;
-using Boo.Lang.Compiler.TypeSystem.Reflection;
-using Castle.MicroKernel;
+using System.Collections.Generic;
 using Boo.Lang.Compiler.Ast;
 using Boo.Lang.Compiler.TypeSystem;
+using Boo.Lang.Compiler.TypeSystem.Reflection;
+using Castle.MicroKernel;
 
 namespace Rhino.Commons.Binsor.Macros
 {
 	[CLSCompliant(false)]
 	public class LifestyleMacro : BaseBinsorExtensionMacro<LifestyleExtension>
 	{
-		public LifestyleMacro() : base("lifestyle", true, "component", "extend")
+		public LifestyleMacro() : base("lifestyle", true)
 		{
 		}
 
-		protected override bool ExpandExtension(ref MethodInvocationExpression extension,
-		                                        MacroStatement macro, MacroStatement parent,
-		                                        ref Statement expansion)
+		protected override bool ExpandExtension(ref MethodInvocationExpression extension, MacroStatement macro, MacroStatement parent, ref Statement expansion)
 		{
 			if (macro.Arguments.Count < 1)
 			{
@@ -54,7 +53,7 @@ namespace Rhino.Commons.Binsor.Macros
 				return false;
 			}
 
-			ReferenceExpression lifestyle = macro.Arguments[0] as ReferenceExpression;
+			var lifestyle = macro.Arguments[0] as ReferenceExpression;
 			if (lifestyle == null)
 			{
 				AddMissingLifestyleTypeError(macro);
@@ -62,14 +61,21 @@ namespace Rhino.Commons.Binsor.Macros
 			}
 
 			macro.Arguments.RemoveAt(0);
-			IEntity entity = NameResolutionService.Resolve(lifestyle.Name);
+
+			var fqLifestyle = String.Format("{0}.{1}", typeof(LifestyleExtension).Namespace, lifestyle.Name);
+			var entity = NameResolutionService.ResolveQualifiedName(fqLifestyle);
+			if (entity == null)
+			{
+				entity = NameResolutionService.Resolve(lifestyle.Name);
+			}
 			if (entity == null || entity.EntityType != EntityType.Type)
 			{
-				AddMissingLifestyleTypeError(macro);
+				AddCompilerError(macro.LexicalInfo, string.Format(
+					"{0} or {1} is not a valid lifestyle in the current scope", fqLifestyle, lifestyle.Name));
 				return false;
 			}
 
-			Type lifestyleType = ((ExternalType) entity).ActualType;
+			var lifestyleType = ((ExternalType) entity).ActualType;
 
 			return (InitializeLifestyleExtension(ref extension, lifestyle, lifestyleType) &&
 			        ArgumentsToCreateNamedArguments(macro.Arguments, extension));
@@ -80,26 +86,22 @@ namespace Rhino.Commons.Binsor.Macros
 			return null;
 		}
 
-		private bool InitializeLifestyleExtension(ref MethodInvocationExpression extension,
-		                                          ReferenceExpression lifestyle, Type lifestyleType)
+		private bool InitializeLifestyleExtension(ref MethodInvocationExpression extension, ReferenceExpression lifestyle, Type lifestyleType)
 		{
 			if (typeof(LifestyleExtension).IsAssignableFrom(lifestyleType))
 			{
-				extension = new MethodInvocationExpression(lifestyle);
+				extension = new MethodInvocationExpression(Expression.Lift(lifestyleType));
 			}
 			else
 			{
-				if (!typeof(ILifestyleManager).IsAssignableFrom(lifestyleType))
+				if (typeof(ILifestyleManager).IsAssignableFrom(lifestyleType) == false)
 				{
-					AddCompilerError(lifestyle.LexicalInfo,
-					                 "A custom lifestyle statement must specify a type that implements " +
+					AddCompilerError(lifestyle.LexicalInfo, "A custom lifestyle statement must specify a type that implements " +
 					                 typeof(ILifestyleManager).FullName);
 					return false;
 				}
 
-				extension = new MethodInvocationExpression(
-					AstUtil.CreateReferenceExpression(typeof(Custom).FullName)
-					);
+				extension = new MethodInvocationExpression(AstUtil.CreateReferenceExpression(typeof(Custom).FullName));
 				extension.Arguments.Add(AstUtil.CreateReferenceExpression(lifestyleType.FullName));
 			}
 

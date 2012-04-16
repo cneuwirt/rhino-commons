@@ -31,10 +31,10 @@
 namespace Rhino.Commons.Binsor
 {
 	using System;
-	using Castle.MicroKernel;
+	using Castle.Core.Resource;
+	using Castle.MicroKernel.SubSystems.Configuration;
 	using Castle.Windsor;
-    using Castle.Core.Resource;
-    using Castle.MicroKernel.SubSystems.Resource;
+
 	public class BooComponentInstaller : IComponentsInstaller
 	{
 		private readonly string fileName;

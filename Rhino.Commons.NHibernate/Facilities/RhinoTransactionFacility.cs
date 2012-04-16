@@ -26,11 +26,12 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
-
+using System.Linq;
 using Castle.Core;
-using Castle.Facilities.AutomaticTransactionManagement;
+using Castle.Facilities.AutoTx;
 using Castle.Services.Transaction;
 using Rhino.Commons.Facilities;
+using Castle.MicroKernel.Registration;
 
 namespace Rhino.Commons
 {
@@ -47,25 +48,24 @@ namespace Rhino.Commons
 		{
 			if (!Kernel.HasComponent(typeof(ITransactionManager)))
 			{
-				Kernel.AddComponent("rhino.transaction.manager",
-									typeof(ITransactionManager), typeof(DefaultTransactionManager));
+				Kernel.Register(Component.For<ITransactionManager>().ImplementedBy<DefaultTransactionManager>().Named("rhino.transaction.manager"));
 			}
 		}
 
-		private void OnNewTransaction(ITransaction transaction, TransactionMode transactionMode, IsolationMode isolationMode, bool distributedTransaction)
+		private void OnNewTransaction(object sender, TransactionEventArgs args)
 		{
-			if (!transaction.DistributedTransaction)
+			if (!args.Transaction.IsAmbient)
 			{
-				transaction.Enlist(new RhinoTransactionResourceAdapter(transactionMode));
+				args.Transaction.Enlist(new RhinoTransactionResourceAdapter(args.Transaction.TransactionMode));
 			}
 		}
 
 		private void Kernel_ComponentCreated(ComponentModel model, object instance)
 		{
-			if (model.Service != null && model.Service == typeof(ITransactionManager))
+			if (model.Services.Any(service => service == typeof(ITransactionManager)))
 			{
-				ITransactionManager txMgr = (ITransactionManager) instance;
-				txMgr.TransactionCreated += new TransactionCreationInfoDelegate(OnNewTransaction);
+				var txMgr = (ITransactionManager)instance;
+				txMgr.TransactionCreated += OnNewTransaction;
 			}	
 		}
 	}

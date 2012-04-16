@@ -54,9 +54,10 @@ namespace Rhino.Commons.Test.Binsor
                                {
                                    return obj is LoggingFacility;
                                });
-            string attribute = logging.FacilityConfig.Attributes["loggingApi"];
+			var config = _container.Kernel.ConfigurationStore.GetFacilityConfiguration(typeof(LoggingFacility).FullName);
+            string attribute = config.Attributes["loggingApi"];
             Assert.AreEqual("Log4net", attribute);
-            attribute = logging.FacilityConfig.Attributes["configFile"];
+            attribute = config.Attributes["configFile"];
             Assert.AreEqual("log4net.config", attribute);
         }
 
@@ -70,7 +71,8 @@ namespace Rhino.Commons.Test.Binsor
                                return obj is LoggingFacility;
                            });
 
-            IConfiguration child = logging.FacilityConfig.Children["NestedConfig"];
+			var config = _container.Kernel.ConfigurationStore.GetFacilityConfiguration(typeof(LoggingFacility).FullName);
+            var child = config.Children["NestedConfig"];
             Assert.IsNotNull(child);
             string attribute = child.Attributes["something"];
             Assert.AreEqual("foo", attribute);

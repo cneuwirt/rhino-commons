@@ -32,9 +32,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Reflection;
-using System.Web;
 using System.Xml;
-using Iesi.Collections.Generic;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Mapping;
@@ -178,7 +176,7 @@ namespace Rhino.Commons
 
 					    if (assemblies != null && assemblies.Length > 0)
 					    {
-					        ISet<Assembly> loadedAssemblies = new HashedSet<Assembly>();
+					        ISet<Assembly> loadedAssemblies = new HashSet<Assembly>();
 					        
                             foreach (PersistentClass mapping in cfg.ClassMappings)
 					        {

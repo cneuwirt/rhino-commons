@@ -28,10 +28,11 @@
 
 #endregion
 
-using Castle.MicroKernel;
+using System.Collections.Generic;
+using Castle.MicroKernel.Registration;
+using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
-using System.Collections.Generic;
 
 namespace Rhino.Commons.Binsor
 {
@@ -40,7 +41,7 @@ namespace Rhino.Commons.Binsor
 	{
 		private EnvironmentDelegate environment;
 		private BooReader.GenerationOptions options;
-		private List<string> namespaces;
+		private readonly List<string> namespaces;
 		private AbstractConfigurationRunner runner;
 		private bool reusable;
 		

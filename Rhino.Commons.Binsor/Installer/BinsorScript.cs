@@ -30,9 +30,8 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Reflection;
-using Castle.Core.Resource;
+using System.Text;
 
 namespace Rhino.Commons.Binsor
 {
@@ -60,17 +59,17 @@ namespace Rhino.Commons.Binsor
 		
 		public static BinsorRunnerInstaller FromCompiledAssembly(string assemblyName)
 		{
-			return FromCompiledAssembly(AssemblyUtil.LoadAssembly(assemblyName));
+			return FromCompiledAssembly(LoadAssembly(assemblyName));
 		}
 
 		public static BinsorRunnerInstaller FromCompiledAssembly(Assembly assembly)
 		{
-			foreach(Type type in assembly.GetExportedTypes())
+			foreach (var type in assembly.GetExportedTypes())
 			{
-				if (type.IsClass && !type.IsAbstract &&
+				if (type.IsClass && type.IsAbstract == false &&
 					typeof(AbstractConfigurationRunner).IsAssignableFrom(type))
 				{
-					AbstractConfigurationRunner runner = (AbstractConfigurationRunner) Activator.CreateInstance(type);
+					var runner = (AbstractConfigurationRunner)Activator.CreateInstance(type);
 					return FromRunner(runner);
 				}
 			}
@@ -83,6 +82,26 @@ namespace Rhino.Commons.Binsor
 		public static BinsorRunnerInstaller FromRunner(AbstractConfigurationRunner runner)
 		{
 			return new BinsorRunnerInstaller(runner);
-		}	
+		}
+
+		private static Assembly LoadAssembly(string assemblyName)
+		{
+			var extension = Path.GetExtension(assemblyName);
+
+			if (extension == ".dll" || extension == ".exe")
+			{
+				string path = Path.GetDirectoryName(assemblyName);
+
+				return path == string.Empty ||
+					   Path.IsPathRooted(path) == false || 
+					   path == AppDomain.CurrentDomain.BaseDirectory
+					? Assembly.Load(Path.GetFileNameWithoutExtension(assemblyName)) 
+					: Assembly.LoadFile(assemblyName);
+			}
+			else
+			{
+				return Assembly.Load(assemblyName);
+			}
+		}
 	}
 }

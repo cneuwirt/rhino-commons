@@ -4,7 +4,6 @@ using Castle.MicroKernel.Facilities;
 using Castle.MicroKernel.Registration;
 using NHibernate;
 using NHibernate.Cfg;
-using Param = Castle.MicroKernel.Registration.Parameter;
 
 namespace Rhino.Commons.Facilities
 {
@@ -21,23 +20,23 @@ namespace Rhino.Commons.Facilities
         {
             Kernel.Register(Component.For(typeof(IRepository<>)).ImplementedBy(typeof(NHRepository<>)));
 
-            MultipleNHibernateUnitOfWorkFactory unitOfWorkFactory = new MultipleNHibernateUnitOfWorkFactory();
-            foreach (NHibernateUnitOfWorkFacilityConfig config in configs)
+			var unitOfWorkFactory = new MultipleNHibernateUnitOfWorkFactory();
+			foreach (var config in configs)
             {
-                NHibernateUnitOfWorkFactory nestedUnitOfWorkFactory = new NHibernateUnitOfWorkFactory(config.NHibernateConfigurationFile);
-                nestedUnitOfWorkFactory.RegisterSessionFactory(CreateSessionFactory(config));
-                unitOfWorkFactory.Add(nestedUnitOfWorkFactory);
+				var nestedUnitOfWorkFactory = new NHibernateUnitOfWorkFactory(config.NHibernateConfigurationFile);
+                ((NHibernateUnitOfWorkFactory)nestedUnitOfWorkFactory).RegisterSessionFactory(CreateSessionFactory(config));
+                unitOfWorkFactory.Add(((NHibernateUnitOfWorkFactory)nestedUnitOfWorkFactory));
             }
-            Kernel.AddComponentInstance<IUnitOfWorkFactory>(unitOfWorkFactory);
+			Kernel.Register(Component.For<IUnitOfWorkFactory>().Instance(unitOfWorkFactory));
         }
 
         private ISessionFactory CreateSessionFactory(NHibernateUnitOfWorkFacilityConfig config)
         {
-            Configuration cfg = new Configuration().Configure(config.NHibernateConfigurationFile);
-            foreach (Type mappedEntity in config.Entities) 
+			var cfg = new Configuration().Configure(config.NHibernateConfigurationFile);
+			foreach (var mappedEntity in config.Entities) 
                 cfg.AddClass(mappedEntity);
-            
-            ISessionFactory sessionFactory = cfg.BuildSessionFactory();
+
+			var sessionFactory = cfg.BuildSessionFactory();
             EntitiesToRepositories.Register(Kernel, sessionFactory, typeof(NHRepository<>), config.IsCandidateForRepository);
             return sessionFactory;
         }

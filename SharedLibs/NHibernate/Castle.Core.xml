@@ -85,6 +85,11 @@
             Specifies the proxying behavior for a component.
             </summary>
         </member>
+        <member name="M:Castle.Core.ComponentProxyBehaviorAttribute.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Castle.Core.ComponentProxyBehaviorAttribute"/> class.
+            </summary>
+        </member>
         <member name="P:Castle.Core.ComponentProxyBehaviorAttribute.UseMarshalByRefProxy">
             <summary>
             Gets or sets a value indicating whether the generated 

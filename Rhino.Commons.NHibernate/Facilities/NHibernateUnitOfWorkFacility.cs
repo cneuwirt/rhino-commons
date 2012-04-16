@@ -56,18 +56,15 @@ namespace Rhino.Commons.Facilities
 
 		protected override void Init()
 		{
-			ComponentRegistration<object> component = Component.For(typeof (IRepository<>)).ImplementedBy(typeof (NHRepository<>));
+			var component = Component.For(typeof(IRepository<>)).ImplementedBy(typeof(NHRepository<>));
 			if(!string.IsNullOrEmpty(config.RepositoryKey))
 			{
 				component.Named(config.RepositoryKey);
 			}
 			
 			Kernel.Register(component);
-			ComponentRegistration<IUnitOfWorkFactory> registerFactory =
-				Component.For<IUnitOfWorkFactory>()
-				.ImplementedBy<NHibernateUnitOfWorkFactory>();
-
-            registerFactory.Parameters(ComponentParameter.ForKey("configurationFileName").Eq(config.NHibernateConfigurationFile));
+			var registerFactory = Component.For<IUnitOfWorkFactory>().ImplementedBy<NHibernateUnitOfWorkFactory>()
+				.DependsOn(Dependency.OnConfigValue("configurationFileName", config.NHibernateConfigurationFile));
 
 			// if we are running in test mode, we don't want to register
 			// the assemblies directly, we let the DatabaseTestFixtureBase do it
@@ -76,10 +73,9 @@ namespace Rhino.Commons.Facilities
 			{
                 registerFactory.DependsOn(Property.ForKey("assemblies").Eq(Assemblies));
 			}
-			Kernel.Register(registerFactory);
-
-            Kernel.AddComponentInstance("entitiesToRepositories", typeof(INHibernateInitializationAware), 
-				new EntitiesToRepositoriesInitializationAware(config.IsCandidateForRepository));        
+			Kernel.Register(registerFactory,
+				Component.For<INHibernateInitializationAware>().Instance(new EntitiesToRepositoriesInitializationAware(config.IsCandidateForRepository))
+					.Named("entitiesToRepositories"));
         }
 
 		public Assembly[] Assemblies

@@ -39,10 +39,7 @@ namespace Rhino.Commons.Binsor
         /// <returns></returns>
         public TypeEnumerable WhereNamespaceEq(params string[] namespaces)
         {
-            predicates.Add(delegate(Type type)
-            {
-                return Array.IndexOf(namespaces, type.Namespace) != -1;
-            });
+            predicates.Add(type => Array.IndexOf(namespaces, type.Namespace) != -1);
             return this;
         }
 
@@ -59,10 +56,10 @@ namespace Rhino.Commons.Binsor
 
         private IEnumerable<Type> Enumerate()
         {
-            foreach (Type type in inner)
+            foreach (var type in inner)
             {
                 bool match = true;
-                foreach (Predicate<Type> predicate in predicates)
+                foreach (var predicate in predicates)
                 {
                     if (predicate(type) == false)
                     {

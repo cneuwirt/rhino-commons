@@ -97,10 +97,10 @@ namespace Rhino.Commons.ForTesting
 					IoC.Initialize(new RhinoContainer(rhinoContainerConfig));
 				IHandler unitOfWorkFactoryHandler = IoC.Container.Kernel
 					.GetHandler(typeof(IUnitOfWorkFactory));
-				unitOfWorkFactoryHandler
-					.AddCustomDependencyValue("configurationSource", cfg);
-				unitOfWorkFactoryHandler
-					.AddCustomDependencyValue("assemblies", assemblies);
+				//unitOfWorkFactoryHandler
+				//	.AddCustomDependencyValue("configurationSource", cfg);
+				//unitOfWorkFactoryHandler
+				//	.AddCustomDependencyValue("assemblies", assemblies);
 			}
 			else
 			{

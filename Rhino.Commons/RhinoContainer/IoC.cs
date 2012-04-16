@@ -34,6 +34,7 @@ using Castle.Windsor;
 namespace Rhino.Commons
 {
 	using System.Collections;
+	using Castle.MicroKernel;
 
 	public static class IoC
     {
@@ -52,7 +53,7 @@ namespace Rhino.Commons
 
 		public static object Resolve(string serviceName)
 		{
-			return Container.Resolve(serviceName);
+			return Container.Resolve<object>(serviceName, new Arguments());
 		}
 		
 		public static object Resolve(Type serviceType, string serviceName)

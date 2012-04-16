@@ -1,4 +1,5 @@
 using System;
+using Castle.MicroKernel;
 using Castle.Windsor;
 
 namespace Rhino.Commons.Binsor
@@ -6,6 +7,7 @@ namespace Rhino.Commons.Binsor
     public class ContainerAdapter
     {
         private readonly IWindsorContainer container;
+		private static readonly Arguments NoArguments = new Arguments();
 
         public ContainerAdapter(IWindsorContainer container)
         {
@@ -19,7 +21,7 @@ namespace Rhino.Commons.Binsor
 
         public object Resolve(string serviceName)
         {
-            return Container.Resolve(serviceName);
+            return Container.Resolve<object>(serviceName, NoArguments);
         }
 
         public object Resolve(Type serviceType, string serviceName)

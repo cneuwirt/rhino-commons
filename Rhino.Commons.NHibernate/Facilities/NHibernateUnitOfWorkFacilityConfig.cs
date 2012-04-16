@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Iesi.Collections.Generic;
 using Rhino.Commons;
 
 namespace Rhino.Commons.Facilities
 {
     public class NHibernateUnitOfWorkFacilityConfig
     {
-        private ISet<Assembly> assemblies = new HashedSet<Assembly>();
-        private ISet<Type> entities = new HashedSet<Type>();
+        private ISet<Assembly> assemblies = new HashSet<Assembly>();
+        private ISet<Type> entities = new HashSet<Type>();
         private string nhibernateConfigurationFile = "hibernate.cfg.xml";
         private IsCandidateForRepositoryDelegate isCandidateForRepository = IsCandidateForRepositoryAttribute.IsCandidate;
     	private string repositoryKey;

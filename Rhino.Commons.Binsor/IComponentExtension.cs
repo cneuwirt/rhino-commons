@@ -26,7 +26,6 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
-
 using Castle.MicroKernel.Registration;
 
 namespace Rhino.Commons.Binsor

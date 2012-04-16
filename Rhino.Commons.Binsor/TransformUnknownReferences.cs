@@ -30,15 +30,14 @@
 
 using System;
 using System.Reflection;
-using Boo.Lang.Compiler;
 using Boo.Lang.Compiler.Ast;
 using Boo.Lang.Compiler.Steps;
 using Boo.Lang.Compiler.TypeSystem;
 using Boo.Lang.Compiler.TypeSystem.Reflection;
+using Boo.Lang.Environments;
 
 namespace Rhino.Commons.Binsor
 {
-
 	internal class TransformUnknownReferences : ProcessMethodBodiesWithDuckTyping
     {
         private readonly ConstructorInfo _componentReferenceConstructor =
@@ -49,7 +48,7 @@ namespace Rhino.Commons.Binsor
 
         public override void OnReferenceExpression(ReferenceExpression node)
         {
-            IEntity entity = NameResolutionService.Resolve(node.Name);
+            var entity = NameResolutionService.Resolve(node.Name);
             if (entity != null)
             {
                 base.OnReferenceExpression(node);
@@ -62,8 +61,8 @@ namespace Rhino.Commons.Binsor
             }
 			else if (node.ParentNode is ExpressionPair)
 			{
-				ExpressionPair pair = (ExpressionPair) node.ParentNode;
-				StringLiteralExpression literal = CodeBuilder.CreateStringLiteral(node.Name);
+				var pair = (ExpressionPair) node.ParentNode;
+				var literal = CodeBuilder.CreateStringLiteral(node.Name);
 				pair.Replace(node, literal);
 				return;
 			}
@@ -73,8 +72,8 @@ namespace Rhino.Commons.Binsor
                 && ((ExpressionPair) node.ParentNode).First == node
                 && node.ParentNode.ParentNode is HashLiteralExpression)
             {
-                ExpressionPair parent = (ExpressionPair) node.ParentNode;
-                StringLiteralExpression literal = CodeBuilder.CreateStringLiteral(node.Name);
+                var parent = (ExpressionPair) node.ParentNode;
+                var literal = CodeBuilder.CreateStringLiteral(node.Name);
                 parent.First = literal;
                 parent.Replace(node, literal);
                 return;
@@ -102,7 +101,7 @@ namespace Rhino.Commons.Binsor
 			ConstructorInfo constructorInfo;
 
 			name = name.Substring(1);
-			IEntity entity = NameResolutionService.ResolveQualifiedName(name);
+			var entity = NameResolutionService.ResolveQualifiedName(name);
 
 			if (entity == null || entity.EntityType != EntityType.Type)
 			{
@@ -114,8 +113,8 @@ namespace Rhino.Commons.Binsor
 				constructorInfo = _componentReferenceTypeConstructor;
 				argument = CodeBuilder.CreateReference(entity);
 			}
-            ExternalConstructor constructor = new ExternalConstructor(My<IReflectionTypeSystemProvider>.Instance, constructorInfo);
-			MethodInvocationExpression invocation = CodeBuilder.CreateConstructorInvocation(constructor, argument);
+            var constructor = new ExternalConstructor(My<IReflectionTypeSystemProvider>.Instance, constructorInfo);
+			var invocation = CodeBuilder.CreateConstructorInvocation(constructor, argument);
 			node.ParentNode.Replace(node, invocation);			
 		}
     }

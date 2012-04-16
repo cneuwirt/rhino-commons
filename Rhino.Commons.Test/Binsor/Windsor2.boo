@@ -32,11 +32,10 @@ import Rhino.Commons from Rhino.Commons.NHibernate
 import Rhino.Commons.Test.Binsor
 import Castle.Facilities.Logging
 import Rhino.Commons.Facilities from Rhino.Commons.ActiveRecord
+import Castle.Facilities.Startable from Castle.Windsor
 import Castle.Facilities.ActiveRecordIntegration from Castle.Facilities.ActiveRecordIntegration
-import Castle.Facilities.FactorySupport from Castle.MicroKernel
-import Castle.Facilities.Startable from Castle.MicroKernel
-import Castle.Facilities.EventWiring from Castle.MicroKernel
-
+import Castle.Facilities.FactorySupport
+import Castle.Facilities.EventWiring
 import file from "disposable.boo"
 
 # Facility constructors
@@ -78,7 +77,7 @@ facility ActiveRecordUnitOfWorkFacility("Rhino.Commons.Binsor")
 	
 # generic type registration
 
-component 'default_repository', IRepository, NHRepository:
+component 'default_repository', typeof(IRepository[of *]), typeof(NHRepository[of *]):
 	lifestyle Transient
 
 component 'disposable', System.IDisposable, MyDisposable.Impl
@@ -149,7 +148,12 @@ for itemName in ["a", "b"]:
 		wireEvent Sent:
 			to "someListener.${itemName}".OnSent
      
-     
+component "using_factory_method" is EmailSender < ISender:
+	createUsing kernel:
+		sender = kernel.Resolve[of EmailSenderFactory]().Create()
+		sender.Hosts = ( 'dolphin', 'gorilla', 'rhino' )
+		return sender
+		     
 if Environment == "Binsor2":
 	component 'foo_bar', Fubar:
 		foo = Environment
@@ -162,4 +166,10 @@ component MyComponent:
 		someMapping:
 			map(keymap):
 				key1 = 'value1'
-				key2 = 'value2'	
+				key2 = 'value2'
+				
+component 'for_creating' is EmailSender < ISender:
+	onCreate sender:
+		sender.Backups = array(ISender,5)
+	onCreate sender:
+		sender.Hosts = ( 'dolphin', 'gorilla', 'rhino' )

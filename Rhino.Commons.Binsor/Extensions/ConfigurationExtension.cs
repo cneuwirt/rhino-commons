@@ -26,7 +26,6 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
-
 using System.Collections;
 using Castle.Core.Configuration;
 using Castle.MicroKernel.Registration;

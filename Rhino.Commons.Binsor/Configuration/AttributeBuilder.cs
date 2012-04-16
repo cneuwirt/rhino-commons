@@ -26,7 +26,6 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
-
 namespace Rhino.Commons.Binsor.Configuration
 {
 	using Castle.Core.Configuration;

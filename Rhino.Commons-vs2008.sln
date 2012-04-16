@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhino.Commons-vs2008", "Rhino.Commons\Rhino.Commons-vs2008.csproj", "{F6321543-E1EC-4999-A562-D9F060C8E3DF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhino.Commons.Test-vs2008", "Rhino.Commons.Test\Rhino.Commons.Test-vs2008.csproj", "{EE98519D-104D-4A31-ADD8-82C5F836018C}"
