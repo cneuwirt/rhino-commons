@@ -84,7 +84,7 @@ namespace Rhino.Commons.Binsor
 
 		public override void OnMemberReferenceExpression(MemberReferenceExpression node)
 		{
-			string name = node.ToString();
+			var name = node.ToString();
 
 			if (name.StartsWith("@"))
 			{
@@ -102,6 +102,13 @@ namespace Rhino.Commons.Binsor
 
 			name = name.Substring(1);
 			var entity = NameResolutionService.ResolveQualifiedName(name);
+
+			if (node.ParentNode.NodeType == NodeType.GenericReferenceExpression)
+			{
+				var genericRef = (GenericReferenceExpression)(node = node.ParentNode);
+				entity = NameResolutionService.ResolveGenericReferenceExpression(genericRef, entity);
+				name = genericRef.ToCodeString();
+			}
 
 			if (entity == null || entity.EntityType != EntityType.Type)
 			{
