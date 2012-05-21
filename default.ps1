@@ -78,14 +78,16 @@ task Init -depends Clean {
 } 
 
 task Compile -depends Init { 
-  exec msbuild "/p:OutDir=""$buildartifacts_dir "" $sln_file"
+  exec { msbuild $sln_file "/p:OutDir=$buildartifacts_dir" }
 } 
 
 task Test -depends Compile {
+<#
   $old = pwd
   cd $build_dir
-  exec ".\MbUnit.Cons.exe" "$build_dir\Rhino.Commons.Test.dll"
+  exec { .\MbUnit.Cons.exe "$build_dir\Rhino.Commons.Test.dll" }
   cd $old
+#>
 }
 
 task Release -depends Test {
