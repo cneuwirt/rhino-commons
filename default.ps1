@@ -12,7 +12,7 @@ properties {
   $uploadScript = "C:\Builds\Upload\PublishBuild.build"
 } 
 
-task default -depends Release
+task default -depends Compile
 
 task Clean { 
   remove-item -force -recurse $buildartifacts_dir -ErrorAction SilentlyContinue 
@@ -82,12 +82,10 @@ task Compile -depends Init {
 } 
 
 task Test -depends Compile {
-<#
   $old = pwd
   cd $build_dir
   exec { .\MbUnit.Cons.exe "$build_dir\Rhino.Commons.Test.dll" }
   cd $old
-#>
 }
 
 task Release -depends Test {
