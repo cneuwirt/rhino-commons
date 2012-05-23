@@ -16,7 +16,6 @@ param(
 	[string]$version,
 	[string]$file = $(throw "file is a required parameter.")
 )
-  $commit = Get-Git-Commit
   $asmInfo = "using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -30,7 +29,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProductAttribute(""$product"")]
 [assembly: AssemblyCopyrightAttribute(""$copyright"")]
 [assembly: AssemblyVersionAttribute(""$version"")]
-[assembly: AssemblyInformationalVersionAttribute(""$version / $commit"")]
+[assembly: AssemblyInformationalVersionAttribute(""$version"")]
 [assembly: AssemblyFileVersionAttribute(""$version"")]
 [assembly: AssemblyDelaySignAttribute(false)]
 "
