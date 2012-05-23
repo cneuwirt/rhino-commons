@@ -108,6 +108,7 @@ task Release -depends Test {
 }
 
 task Upload -depend Release {
+<#
 	if (Test-Path $uploadScript ) {
 		$log = git log -n 1 --oneline		
 		msbuild $uploadScript /p:Category=$uploadCategory "/p:Comment=$log" "/p:File=$release_dir\Rhino.Commons-$humanReadableversion-Build-$env:ccnetnumericlabel.zip"
@@ -119,4 +120,5 @@ task Upload -depend Release {
 	else {
 		Write-Host "could not find upload script $uploadScript, skipping upload"
 	}
+#>
 }
